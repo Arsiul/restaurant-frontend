@@ -14,9 +14,9 @@ const Confirm = ({
   <Modal
     title={title}
     onClose={onCancel}
-    footer={
+    footer={(close) => (
       <>
-        <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={loading}>
+        <button type="button" className="btn btn-ghost" onClick={close} disabled={loading}>
           {cancelLabel}
         </button>
         <button
@@ -28,7 +28,7 @@ const Confirm = ({
           {loading ? "Procesando" : confirmLabel}
         </button>
       </>
-    }
+    )}
   >
     <p className="confirm-message">{message}</p>
     {detail && <p className="confirm-detail">{detail}</p>}

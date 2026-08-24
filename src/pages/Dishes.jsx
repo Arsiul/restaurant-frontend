@@ -319,16 +319,16 @@ const Dishes = () => {
         <Modal
           title={editing ? "Editar plato" : "Nuevo plato"}
           onClose={() => setForm(null)}
-          footer={
+          footer={(close) => (
             <>
-              <button type="button" className="btn btn-ghost" onClick={() => setForm(null)}>
+              <button type="button" className="btn btn-ghost" onClick={close}>
                 Cancelar
               </button>
               <button type="submit" form="dish-form" className="btn" disabled={saving}>
                 {saving ? "Guardando" : "Guardar"}
               </button>
             </>
-          }
+          )}
         >
           <form id="dish-form" onSubmit={save}>
             {error && <div className="alert alert-error">{error}</div>}
@@ -387,9 +387,9 @@ const Dishes = () => {
         <Modal
           title="Importar platos"
           onClose={closeImport}
-          footer={
+          footer={(close) => (
             <>
-              <button type="button" className="btn btn-ghost" onClick={closeImport}>
+              <button type="button" className="btn btn-ghost" onClick={close}>
                 Cerrar
               </button>
               {!result && (
@@ -398,7 +398,7 @@ const Dishes = () => {
                 </button>
               )}
             </>
-          }
+          )}
         >
           <form id="import-form" onSubmit={send}>
             {error && <div className="alert alert-error">{error}</div>}

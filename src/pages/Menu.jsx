@@ -312,16 +312,16 @@ const Menu = () => {
         <Modal
           title="Asignar plato a un menu"
           onClose={() => setAssign(null)}
-          footer={
+          footer={(close) => (
             <>
-              <button type="button" className="btn btn-ghost" onClick={() => setAssign(null)}>
+              <button type="button" className="btn btn-ghost" onClick={close}>
                 Cancelar
               </button>
               <button type="submit" form="assign-form" className="btn" disabled={saving}>
                 {saving ? "Guardando" : "Asignar"}
               </button>
             </>
-          }
+          )}
         >
           <form id="assign-form" onSubmit={saveAssign}>
             {error && <div className="alert alert-error">{error}</div>}
@@ -438,16 +438,16 @@ const Menu = () => {
         <Modal
           title={`Precio de ${item.name}`}
           onClose={() => setItem(null)}
-          footer={
+          footer={(close) => (
             <>
-              <button type="button" className="btn btn-ghost" onClick={() => setItem(null)}>
+              <button type="button" className="btn btn-ghost" onClick={close}>
                 Cancelar
               </button>
               <button type="submit" form="item-form" className="btn" disabled={saving}>
                 {saving ? "Guardando" : "Guardar"}
               </button>
             </>
-          }
+          )}
         >
           <form id="item-form" onSubmit={saveItem}>
             {error && <div className="alert alert-error">{error}</div>}
@@ -515,16 +515,16 @@ const Menu = () => {
         <Modal
           title="Editar plato"
           onClose={() => setDish(null)}
-          footer={
+          footer={(close) => (
             <>
-              <button type="button" className="btn btn-ghost" onClick={() => setDish(null)}>
+              <button type="button" className="btn btn-ghost" onClick={close}>
                 Cancelar
               </button>
               <button type="submit" form="dish-edit" className="btn" disabled={saving}>
                 {saving ? "Guardando" : "Guardar"}
               </button>
             </>
-          }
+          )}
         >
           <form id="dish-edit" onSubmit={saveDish}>
             {error && <div className="alert alert-error">{error}</div>}
