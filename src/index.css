@@ -1,18 +1,21 @@
 :root {
-  --primary: #3b45e8;
-  --primary-dark: #2b34c9;
-  --primary-soft: #eceefd;
-  --accent: #f0514a;
-  --bg: #f4f5fa;
+  --primary: #c1541f;
+  --primary-dark: #a3431a;
+  --primary-soft: #f9e9df;
+  --accent: #c08a2e;
+  --dark: #2a1a12;
+  --dark-soft: #3d2718;
+  --bg: #faf6f0;
   --surface: #ffffff;
-  --text: #1b1d29;
-  --muted: #8b90a6;
-  --border: #ebedf4;
-  --green: #17c964;
-  --orange: #f5a524;
+  --text: #26170f;
+  --muted: #8d7663;
+  --border: #efe4d8;
+  --green: #3f7d4f;
+  --danger: #b8391f;
+  --orange: #c08a2e;
   --radius: 14px;
   --radius-sm: 10px;
-  --shadow: 0 4px 24px rgba(27, 29, 41, 0.06);
+  --shadow: 0 4px 24px rgba(38, 23, 15, 0.07);
   --font: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
@@ -48,8 +51,8 @@ textarea {
 }
 
 .auth-art {
-  background: linear-gradient(150deg, #1b1f4b 0%, #3b45e8 55%, #6b3fd6 100%);
-  color: #ffffff;
+  background: linear-gradient(155deg, #1e130c 0%, #3d2718 45%, #6b4520 100%);
+  color: #f7f1e6;
   padding: 56px 48px;
   display: flex;
   flex-direction: column;
@@ -64,9 +67,17 @@ textarea {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(192, 138, 46, 0.16);
   right: -140px;
   bottom: -160px;
+}
+
+.auth-art h2 {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.auth-stats strong {
+  color: #e0b45f;
 }
 
 .auth-brand {
@@ -266,7 +277,7 @@ textarea {
 }
 
 .btn-light:hover:not(:disabled) {
-  background: #dfe2fb;
+  background: #f2dcca;
 }
 
 .btn-ghost {
@@ -281,11 +292,11 @@ textarea {
 }
 
 .btn-danger {
-  background: var(--accent);
+  background: var(--danger);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #d63f39;
+  background: #9b2f19;
 }
 
 .btn-sm {
@@ -304,13 +315,13 @@ textarea {
 }
 
 .alert-error {
-  background: #fdeceb;
-  color: #c53b34;
+  background: #f9e4e0;
+  color: #a8391f;
 }
 
 .alert-success {
-  background: #e7f9ef;
-  color: #128a46;
+  background: #e4f0e5;
+  color: #31663e;
 }
 
 .alert-info {
@@ -353,8 +364,8 @@ textarea {
 
 .sidebar {
   width: 232px;
-  background: var(--primary);
-  color: #ffffff;
+  background: linear-gradient(170deg, #2a1a12 0%, #3d2718 100%);
+  color: #f7f1e6;
   padding: 28px 18px;
   display: flex;
   flex-direction: column;
@@ -383,26 +394,26 @@ textarea {
 .sidebar-nav a {
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(247, 241, 230, 0.72);
   text-decoration: none;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
 
 .sidebar-nav a:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  background: rgba(247, 241, 230, 0.1);
+  color: #f7f1e6;
 }
 
 .sidebar-nav a.active {
-  background: var(--surface);
-  color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .sidebar-foot {
   padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid rgba(247, 241, 230, 0.16);
 }
 
 .sidebar-user {
@@ -424,17 +435,17 @@ textarea {
 .btn-logout {
   width: 100%;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(247, 241, 230, 0.14);
   color: #ffffff;
   font-size: 13px;
 }
 
 .btn-logout:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(247, 241, 230, 0.24);
 }
 
 .avatar-light {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(247, 241, 230, 0.18);
   width: 34px;
   height: 34px;
   font-size: 12px;
@@ -710,48 +721,48 @@ tbody tr.selected .status {
 }
 
 .action-edit {
-  background: #e6e8fd;
-  color: #2b34c9;
+  background: #f6e8dd;
+  color: #a3431a;
 }
 
 .action-edit:hover {
-  background: #d3d7fb;
+  background: #f0dbc9;
 }
 
 .action-danger {
-  background: #fde5e4;
-  color: #c53b34;
+  background: #f9e2dd;
+  color: #a8391f;
 }
 
 .action-danger:hover {
-  background: #fbd4d2;
+  background: #f4d2ca;
 }
 
 .action-success {
-  background: #dcf6e6;
-  color: #0f7a3d;
+  background: #e2efe3;
+  color: #31663e;
 }
 
 .action-success:hover {
-  background: #c7f0d7;
+  background: #d2e6d5;
 }
 
 .action-price {
-  background: #fdf0d8;
-  color: #a86a06;
+  background: #f8edd7;
+  color: #95681c;
 }
 
 .action-price:hover {
-  background: #fbe6bf;
+  background: #f2e2c2;
 }
 
 tbody tr.selected .row-actions button {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
 tbody tr.selected .row-actions button:hover {
-  background: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.38);
 }
 
 .table-foot {
@@ -801,7 +812,7 @@ tbody tr.selected .row-actions button:hover {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(27, 29, 41, 0.45);
+  background: rgba(38, 23, 15, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -817,7 +828,7 @@ tbody tr.selected .row-actions button:hover {
   max-width: 460px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 60px rgba(27, 29, 41, 0.24);
+  box-shadow: 0 24px 60px rgba(38, 23, 15, 0.28);
   animation: modal-in 0.22s cubic-bezier(0.2, 0.85, 0.3, 1) both;
 }
 

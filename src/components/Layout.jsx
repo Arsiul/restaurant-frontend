@@ -18,8 +18,8 @@ const Layout = ({ children }) => {
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <img src="/icono.png" alt="Restaurant ST" className="brand-logo" />
-          <span>Restaurant ST</span>
+          <img src="/icono.png" alt="RIMBERIO" className="brand-logo" />
+          <span>RIMBERIO</span>
         </div>
 
         <nav className="sidebar-nav">

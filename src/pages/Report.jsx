@@ -15,7 +15,7 @@ import {
 } from "recharts"
 import api, { getMessage, getUserName, getInitials } from "../api"
 
-const COLORS = ["#3b45e8", "#17c964", "#f5a524", "#f0514a", "#6b3fd6", "#00b8d9"]
+const COLORS = ["#c1541f", "#c08a2e", "#7a5c3e", "#8f3f1c", "#d9b168", "#4f3a29"]
 
 const Report = () => {
   const [data, setData] = useState(null)
@@ -100,11 +100,11 @@ const Report = () => {
           <div className="chart-title">Platos con mas apariciones en cartas</div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={topDishes}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#ebedf4" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#efe4d8" vertical={false} />
               <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-20} height={60} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Bar dataKey="total" fill="#3b45e8" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="total" fill="#c1541f" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -117,11 +117,11 @@ const Report = () => {
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={salesByDate}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#ebedf4" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#efe4d8" vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#3b45e8" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="total" stroke="#c1541f" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         )}

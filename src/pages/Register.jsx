@@ -134,8 +134,8 @@ const Register = () => {
     <div className="auth">
       <section className="auth-art">
         <div className="auth-brand">
-          <img src="/icono.png" alt="Restaurant ST" className="brand-logo" />
-          <span>Restaurant ST</span>
+          <img src="/icono.png" alt="RIMBERIO" className="brand-logo" />
+          <span>RIMBERIO</span>
         </div>
 
         <div>
