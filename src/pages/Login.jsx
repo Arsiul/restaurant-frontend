@@ -36,8 +36,8 @@ const Login = () => {
     <div className="auth">
       <section className="auth-art">
         <div className="auth-brand">
-          <img src="/icono.png" alt="eMenu" className="brand-logo" />
-          <span>eMenu</span>
+          <img src="/icono.png" alt="Restaurant ST" className="brand-logo" />
+          <span>Restaurant ST</span>
         </div>
 
         <div>
