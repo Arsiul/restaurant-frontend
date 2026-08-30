@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import { clearSession, getUserName, getInitials, getRol, getEmpresa, esAdmin } from "../api"
 import Confirm from "./Confirm"
 
@@ -16,6 +16,7 @@ const MENU = {
 
 const Layout = ({ children }) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [asking, setAsking] = useState(false)
 
   const rol = getRol()
@@ -61,7 +62,11 @@ const Layout = ({ children }) => {
         </div>
       </aside>
 
-      <main className="main">{children}</main>
+      {/* La key hace que el contenido se remonte al cambiar de modulo, que
+          es lo que vuelve a disparar la animacion de entrada. */}
+      <main className="main" key={location.pathname}>
+        {children}
+      </main>
 
       {asking && (
         <Confirm

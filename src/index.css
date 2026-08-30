@@ -1655,3 +1655,404 @@ tbody tr.selected .row-actions button:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* =====================================================================
+   ANIMACIONES
+
+   Una sola curva y tres duraciones para todo, para que la interfaz se
+   sienta de una pieza. El escalonado de las listas se hace con
+   nth-child: a partir del item 12 comparten retraso, asi una tabla de
+   25 filas no tarda dos segundos en terminar de aparecer.
+   ===================================================================== */
+
+:root {
+  --curva: cubic-bezier(0.2, 0.85, 0.3, 1);
+  --rapido: 0.15s;
+  --medio: 0.28s;
+  --lento: 0.42s;
+  --paso: 45ms;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes aparecer-suave {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes aparecer-escala {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+@keyframes entrar-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes crecer-barra {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ---------- entrada de cada pantalla ----------
+   El <main> lleva key={pathname}, asi que se remonta al navegar y la
+   animacion vuelve a dispararse en cada cambio de modulo. */
+
+.main > * {
+  animation: aparecer var(--lento) var(--curva) backwards;
+}
+
+.main > *:nth-child(1) { animation-delay: 0ms; }
+.main > *:nth-child(2) { animation-delay: 60ms; }
+.main > *:nth-child(3) { animation-delay: 120ms; }
+.main > *:nth-child(4) { animation-delay: 180ms; }
+.main > *:nth-child(5) { animation-delay: 240ms; }
+.main > *:nth-child(n + 6) { animation-delay: 300ms; }
+
+/* La barra lateral entra una sola vez, al montar el layout */
+
+.sidebar {
+  animation: entrar-izquierda var(--lento) var(--curva) backwards;
+}
+
+.sidebar-nav a {
+  animation: aparecer-suave var(--medio) ease backwards;
+}
+
+.sidebar-nav a:nth-child(1) { animation-delay: 140ms; }
+.sidebar-nav a:nth-child(2) { animation-delay: 200ms; }
+.sidebar-nav a:nth-child(3) { animation-delay: 260ms; }
+
+/* ---------- listas escalonadas ---------- */
+
+.cards > *,
+.metrics > *,
+.sugerencia-lista > *,
+.seleccion > *,
+.comparativa-fila,
+.insight {
+  animation: aparecer-escala var(--medio) var(--curva) backwards;
+}
+
+.cards > *:nth-child(1),
+.metrics > *:nth-child(1),
+.sugerencia-lista > *:nth-child(1),
+.seleccion > *:nth-child(1) { animation-delay: calc(var(--paso) * 1); }
+
+.cards > *:nth-child(2),
+.metrics > *:nth-child(2),
+.sugerencia-lista > *:nth-child(2),
+.seleccion > *:nth-child(2) { animation-delay: calc(var(--paso) * 2); }
+
+.cards > *:nth-child(3),
+.metrics > *:nth-child(3),
+.sugerencia-lista > *:nth-child(3),
+.seleccion > *:nth-child(3) { animation-delay: calc(var(--paso) * 3); }
+
+.cards > *:nth-child(4),
+.metrics > *:nth-child(4),
+.sugerencia-lista > *:nth-child(4),
+.seleccion > *:nth-child(4) { animation-delay: calc(var(--paso) * 4); }
+
+.cards > *:nth-child(5),
+.sugerencia-lista > *:nth-child(5),
+.seleccion > *:nth-child(5) { animation-delay: calc(var(--paso) * 5); }
+
+.cards > *:nth-child(6),
+.seleccion > *:nth-child(6) { animation-delay: calc(var(--paso) * 6); }
+
+.cards > *:nth-child(7),
+.seleccion > *:nth-child(7) { animation-delay: calc(var(--paso) * 7); }
+
+.cards > *:nth-child(n + 8),
+.seleccion > *:nth-child(n + 8) { animation-delay: calc(var(--paso) * 8); }
+
+.comparativa-fila:nth-child(1) { animation-delay: calc(var(--paso) * 1); }
+.comparativa-fila:nth-child(2) { animation-delay: calc(var(--paso) * 2); }
+.comparativa-fila:nth-child(3) { animation-delay: calc(var(--paso) * 3); }
+.comparativa-fila:nth-child(4) { animation-delay: calc(var(--paso) * 4); }
+
+.insight:nth-child(2) { animation-delay: calc(var(--paso) * 1); }
+.insight:nth-child(3) { animation-delay: calc(var(--paso) * 2); }
+.insight:nth-child(4) { animation-delay: calc(var(--paso) * 3); }
+.insight:nth-child(n + 5) { animation-delay: calc(var(--paso) * 4); }
+
+/* ---------- filas de tabla ---------- */
+
+.table-wrap tbody tr {
+  animation: aparecer-suave var(--medio) ease backwards;
+}
+
+.table-wrap tbody tr:nth-child(1) { animation-delay: 20ms; }
+.table-wrap tbody tr:nth-child(2) { animation-delay: 40ms; }
+.table-wrap tbody tr:nth-child(3) { animation-delay: 60ms; }
+.table-wrap tbody tr:nth-child(4) { animation-delay: 80ms; }
+.table-wrap tbody tr:nth-child(5) { animation-delay: 100ms; }
+.table-wrap tbody tr:nth-child(6) { animation-delay: 120ms; }
+.table-wrap tbody tr:nth-child(7) { animation-delay: 140ms; }
+.table-wrap tbody tr:nth-child(8) { animation-delay: 160ms; }
+.table-wrap tbody tr:nth-child(n + 9) { animation-delay: 180ms; }
+
+.table-wrap tbody tr {
+  transition: background var(--rapido);
+}
+
+/* ---------- avisos ---------- */
+
+.alert {
+  animation: aparecer var(--medio) var(--curva) backwards;
+}
+
+/* ---------- estados vacios y de carga ---------- */
+
+.empty {
+  animation: aparecer-suave var(--lento) ease backwards;
+}
+
+.loading {
+  animation: latido 1.4s ease-in-out infinite;
+}
+
+/* ---------- transiciones de interaccion ---------- */
+
+.btn {
+  transition:
+    background var(--rapido),
+    opacity var(--rapido),
+    transform var(--rapido),
+    box-shadow var(--rapido);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.field input,
+.field select,
+.field textarea,
+.toolbar input,
+.toolbar select {
+  transition:
+    border-color var(--rapido),
+    box-shadow var(--rapido),
+    background var(--rapido);
+}
+
+.card {
+  transition:
+    box-shadow var(--medio) var(--curva),
+    transform var(--medio) var(--curva);
+}
+
+.metric {
+  transition:
+    transform var(--medio) var(--curva),
+    box-shadow var(--medio) var(--curva);
+}
+
+.metric:hover {
+  transform: translateY(-2px);
+}
+
+.sugerencia {
+  transition:
+    border-color var(--rapido),
+    background var(--rapido),
+    transform var(--medio) var(--curva);
+}
+
+.sugerencia:hover {
+  transform: translateY(-2px);
+  border-color: var(--green);
+}
+
+.seleccion-item {
+  transition:
+    border-color var(--rapido),
+    box-shadow var(--medio) var(--curva),
+    transform var(--medio) var(--curva);
+}
+
+.seleccion-item:hover {
+  transform: translateY(-2px);
+}
+
+.seleccion-orden {
+  animation: aparecer-escala var(--medio) var(--curva) backwards;
+}
+
+.tabs button,
+.pagination button,
+.row-actions button,
+.col-borrar,
+.chip {
+  transition:
+    background var(--rapido),
+    color var(--rapido),
+    border-color var(--rapido),
+    transform var(--rapido);
+}
+
+.pagination button:not(:disabled):hover,
+.tabs button:hover {
+  transform: translateY(-1px);
+}
+
+.celda-editable {
+  transition: background var(--rapido), box-shadow var(--rapido);
+}
+
+.archivo-card {
+  transition:
+    transform var(--medio) var(--curva),
+    box-shadow var(--medio) var(--curva),
+    border-color var(--rapido);
+}
+
+.dropzone {
+  transition:
+    border-color var(--medio) var(--curva),
+    background var(--medio) var(--curva),
+    transform var(--medio) var(--curva);
+}
+
+.dropzone.activa {
+  transform: scale(1.015);
+}
+
+.avatar,
+.avatar-light {
+  transition: transform var(--medio) var(--curva);
+}
+
+.sidebar-user:hover .avatar-light {
+  transform: scale(1.06);
+}
+
+.brand-logo {
+  transition: transform var(--lento) var(--curva);
+}
+
+.sidebar-brand:hover .brand-logo {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* La barra de la comparativa crece desde la izquierda al aparecer, y
+   despues sigue animando su ancho cuando cambia la seleccion. */
+
+.comparativa-relleno {
+  transform-origin: left center;
+  animation: crecer-barra var(--lento) var(--curva) backwards;
+  animation-delay: 180ms;
+}
+
+.insight-bar {
+  transform-origin: top center;
+  animation: crecer-barra var(--medio) var(--curva) backwards;
+  animation-delay: 120ms;
+}
+
+/* ---------- accesibilidad ----------
+   Quien pide menos movimiento recibe la interfaz completa, sin recorrido
+   ni escalonado: los elementos aparecen ya en su sitio. */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- entrada de las pantallas de acceso ----------
+   Login y registro viven fuera del layout, asi que no los alcanza la
+   regla de .main. El panel entra desde la derecha y el arte desde la
+   izquierda, para que la pantalla se arme hacia el centro. */
+
+.auth-art {
+  animation: entrar-izquierda var(--lento) var(--curva) backwards;
+}
+
+.auth-art > *,
+.auth-form > * {
+  animation: aparecer var(--medio) var(--curva) backwards;
+}
+
+.auth-art > *:nth-child(1),
+.auth-form > *:nth-child(1) { animation-delay: 120ms; }
+.auth-art > *:nth-child(2),
+.auth-form > *:nth-child(2) { animation-delay: 180ms; }
+.auth-art > *:nth-child(3),
+.auth-form > *:nth-child(3) { animation-delay: 240ms; }
+.auth-form > *:nth-child(4) { animation-delay: 300ms; }
+.auth-form > *:nth-child(5) { animation-delay: 360ms; }
+.auth-form > *:nth-child(n + 6) { animation-delay: 420ms; }
+
+.auth-panel {
+  animation: aparecer-suave var(--lento) ease backwards;
+}
+
+.auth-footer button,
+.link-right {
+  transition: color var(--rapido), opacity var(--rapido);
+}
+
+.auth-footer button:hover,
+.link-right:hover {
+  opacity: 0.75;
+}
+
+/* Los casilleros del codigo entran uno detras de otro, de izquierda a
+   derecha, para que se lea como una secuencia. */
+
+.otp input {
+  animation: aparecer-escala var(--medio) var(--curva) backwards;
+  transition: border-color var(--rapido), background var(--rapido), transform var(--rapido);
+}
+
+.otp input:nth-child(1) { animation-delay: 60ms; }
+.otp input:nth-child(2) { animation-delay: 105ms; }
+.otp input:nth-child(3) { animation-delay: 150ms; }
+.otp input:nth-child(4) { animation-delay: 195ms; }
+.otp input:nth-child(5) { animation-delay: 240ms; }
+.otp input:nth-child(6) { animation-delay: 285ms; }
+.otp input:nth-child(7) { animation-delay: 330ms; }
+.otp input:nth-child(8) { animation-delay: 375ms; }
+
+.otp input:focus {
+  transform: translateY(-2px);
+}
+
+.checkbox input {
+  transition: transform var(--rapido);
+}
+
+.checkbox:hover input {
+  transform: scale(1.1);
+}
