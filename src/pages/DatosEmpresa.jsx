@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import api, { getMessage, getUserName, getInitials, getEmpresa, miles } from "../api"
+import { getUserName, getInitials, getEmpresa, miles } from "../api"
 import * as db from "../empresaDb"
 import Modal from "../components/Modal"
 import Confirm from "../components/Confirm"
@@ -9,10 +9,12 @@ const PAGINA = 25
 /**
  * Modulo 2 del trabajador.
  *
- * Todas las operaciones sobre la base salen de aqui, del navegador, sin
- * pasar por el backend: son llamadas RPC contra Postgres. Lo unico que
- * sigue viniendo de la API son las sugerencias, porque son un analisis
- * sobre los archivos importados y no una operacion de base de datos.
+ * Todas las operaciones salen de aqui, del navegador, sin pasar por el
+ * backend: son llamadas RPC contra Postgres.
+ *
+ * El trabajo que tiene que hacer el trabajador viene unicamente de las
+ * tareas que le asigna el administrador. No hay sugerencias automaticas:
+ * si nadie se lo pidio, no aparece.
  */
 const DatosEmpresa = () => {
   const [tabla, setTabla] = useState("empresa_datos")
@@ -23,7 +25,6 @@ const DatosEmpresa = () => {
   const [error, setError] = useState("")
   const [aviso, setAviso] = useState("")
 
-  const [sugerencias, setSugerencias] = useState([])
   const [cambios, setCambios] = useState([])
   const [tareas, setTareas] = useState([])
   const [verTareas, setVerTareas] = useState(false)
@@ -55,11 +56,6 @@ const DatosEmpresa = () => {
     } catch (problema) {
       setError(problema.message)
     }
-
-    api
-      .get("/empresa/sugerencias")
-      .then((r) => setSugerencias(r.data.sugerencias || []))
-      .catch(() => {})
   }
 
   useEffect(() => {
@@ -166,10 +162,6 @@ const DatosEmpresa = () => {
   const columnasVisibles =
     datos && datos.existe ? datos.columnas.filter((c) => c.columna !== "created_at") : []
 
-  // Una columna que el trabajador ya creo deja de ser una sugerencia.
-  const existentes = columnasVisibles.map((c) => c.columna)
-  const sinAtender = sugerencias.filter((s) => !existentes.includes(s.columna))
-
   const pendientes = tareas.filter((t) => t.estado === "pendiente")
   const completadas = tareas.filter((t) => t.estado === "completada")
 
@@ -196,41 +188,6 @@ const DatosEmpresa = () => {
 
       {aviso && <div className="alert alert-success">{aviso}</div>}
       {error && <div className="alert alert-error">{error}</div>}
-
-      {sinAtender.length > 0 && (
-        <div className="card sugerencias">
-          <div className="chart-title">Lo que la competencia registra y nosotros no</div>
-
-          <div className="sugerencia-lista">
-            {sinAtender.map((s) => (
-              <div className="sugerencia" key={s.columna}>
-                <div>
-                  <h4>{s.columna}</h4>
-                  <p>
-                    <span className="chip chip-tipo">{s.tipoDato}</span> {s.ejemplo}
-                  </p>
-                  <span className="muted">Visto en {s.origen}</span>
-                </div>
-
-                <button
-                  type="button"
-                  className="btn btn-sm"
-                  onClick={() =>
-                    setFormColumna({
-                      nombre: s.columna,
-                      tipo: s.tipoDato,
-                      valorDefecto: "",
-                      motivo: `Detectado en ${s.origen}: ${s.titulo}`
-                    })
-                  }
-                >
-                  Agregar
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="toolbar">
         <div className="toolbar-left">

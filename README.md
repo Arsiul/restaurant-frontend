@@ -44,7 +44,7 @@ frontend/
     main.jsx                   Punto de entrada y enrutador
     App.jsx                    Rutas publicas y privadas por rol
     api.js                     Cliente Axios, sesion y helpers de rol
-    empresaDb.js               Acceso directo a la base para el modulo del trabajador
+    empresaDb.js               Acceso directo a la base y tareas del trabajador
     index.css                  Variables de diseno y estilos
     components/
       Layout.jsx               Barra lateral, menu segun el rol
@@ -120,9 +120,12 @@ llama tenga rol de trabajador, que la tabla sea `empresa_datos` o `emp_*`, y que
 el nombre y el tipo sean validos antes de armar el SQL. Editar el `localStorage`
 o llamar a la funcion desde la consola no saltea ninguno de esos controles.
 
-Arriba aparece un bloque de sugerencias con las columnas que la competencia
-registra y la empresa no, tomadas de la comparacion mas reciente. Cada una tiene
-un boton que abre el formulario ya completo.
+El trabajo a realizar viene unicamente de las tareas que asigna el
+administrador. El boton "Mis tareas" las abre, con un contador de pendientes.
+Cada tarea indica que columna crear y de que tipo, pero no la crea: el
+trabajador la escribe a mano en el formulario de siempre. Las que pedian una
+columna se cierran solas cuando esa columna existe; las analiticas se marcan
+como hechas a mano.
 
 Abajo queda la bitacora de todos los cambios de estructura aplicados, con su
 motivo.
