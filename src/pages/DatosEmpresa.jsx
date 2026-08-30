@@ -25,6 +25,8 @@ const DatosEmpresa = () => {
 
   const [sugerencias, setSugerencias] = useState([])
   const [cambios, setCambios] = useState([])
+  const [tareas, setTareas] = useState([])
+  const [verTareas, setVerTareas] = useState(false)
 
   const [formColumna, setFormColumna] = useState(null)
   const [formTabla, setFormTabla] = useState(null)
@@ -49,6 +51,7 @@ const DatosEmpresa = () => {
     try {
       setTablas(await db.tablas())
       setCambios(await db.cambios())
+      setTareas(await db.tareas())
     } catch (problema) {
       setError(problema.message)
     }
@@ -84,12 +87,30 @@ const DatosEmpresa = () => {
     try {
       const r = await db.agregarColumna({ ...formColumna, tabla })
       setFormColumna(null)
-      mostrarAviso(`Se agrego la columna "${r.columna}" (${r.tipo}) a ${r.tabla}`)
+
+      // El cierre de la tarea lo hace la propia funcion en la base, asi
+      // que aqui solo se avisa de lo que ya paso.
+      mostrarAviso(
+        `Se agrego la columna "${r.columna}" (${r.tipo}) a ${r.tabla}` +
+          (r.tareasCerradas > 0
+            ? `. Se cerro ${r.tareasCerradas === 1 ? "la tarea que la pedia" : `${r.tareasCerradas} tareas que la pedian`}`
+            : "")
+      )
+
       refrescar()
     } catch (problema) {
       setFormColumna({ ...formColumna, error: problema.message })
     } finally {
       setGuardando(false)
+    }
+  }
+
+  const completarTarea = async (id) => {
+    try {
+      await db.completarTarea(id)
+      setTareas(await db.tareas())
+    } catch (problema) {
+      setError(problema.message)
     }
   }
 
@@ -147,7 +168,10 @@ const DatosEmpresa = () => {
 
   // Una columna que el trabajador ya creo deja de ser una sugerencia.
   const existentes = columnasVisibles.map((c) => c.columna)
-  const pendientes = sugerencias.filter((s) => !existentes.includes(s.columna))
+  const sinAtender = sugerencias.filter((s) => !existentes.includes(s.columna))
+
+  const pendientes = tareas.filter((t) => t.estado === "pendiente")
+  const completadas = tareas.filter((t) => t.estado === "completada")
 
   const totalPaginas = datos && datos.total ? Math.ceil(datos.total / PAGINA) : 1
 
@@ -173,12 +197,12 @@ const DatosEmpresa = () => {
       {aviso && <div className="alert alert-success">{aviso}</div>}
       {error && <div className="alert alert-error">{error}</div>}
 
-      {pendientes.length > 0 && (
+      {sinAtender.length > 0 && (
         <div className="card sugerencias">
           <div className="chart-title">Lo que la competencia registra y nosotros no</div>
 
           <div className="sugerencia-lista">
-            {pendientes.map((s) => (
+            {sinAtender.map((s) => (
               <div className="sugerencia" key={s.columna}>
                 <div>
                   <h4>{s.columna}</h4>
@@ -226,6 +250,15 @@ const DatosEmpresa = () => {
         </div>
 
         <div className="row-actions">
+          <button
+            type="button"
+            className={`btn btn-ghost btn-tareas ${pendientes.length > 0 ? "con-pendientes" : ""}`}
+            onClick={() => setVerTareas(true)}
+          >
+            Mis tareas
+            {pendientes.length > 0 && <span className="badge">{pendientes.length}</span>}
+          </button>
+
           <button
             type="button"
             className="btn btn-light"
@@ -599,6 +632,105 @@ const DatosEmpresa = () => {
           </div>
 
           {editando.error && <div className="alert alert-error">{editando.error}</div>}
+        </Modal>
+      )}
+
+      {verTareas && (
+        <Modal ancho title="Mis tareas" onClose={() => setVerTareas(false)}>
+          {tareas.length === 0 && (
+            <div className="empty">El administrador todavia no te asigno ninguna tarea</div>
+          )}
+
+          {pendientes.length > 0 && (
+            <>
+              <div className="chart-title">Pendientes ({pendientes.length})</div>
+
+              {pendientes.map((tarea) => (
+                <div className="tarea" key={tarea.id}>
+                  <div className={`insight-bar ${tarea.nivel}`} />
+
+                  <div className="tarea-cuerpo">
+                    <h4>{tarea.titulo}</h4>
+                    <p>{tarea.mensaje}</p>
+
+                    {tarea.columna_sugerida ? (
+                      <div className="tarea-instruccion">
+                        Crea la columna <code>{tarea.columna_sugerida}</code> de tipo{" "}
+                        <strong>{tarea.tipo_sugerido}</strong> en{" "}
+                        <code>{tarea.tabla_destino}</code>
+                        {tarea.ejemplo && <> &mdash; {tarea.ejemplo}</>}
+                        <span className="muted">
+                          Usa el boton &quot;Agregar columna&quot;. La tarea se cierra sola cuando la
+                          columna exista.
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="tarea-instruccion tarea-lectura">
+                        Esta tarea no pide crear ninguna columna. Marcala como hecha cuando hayas
+                        actuado sobre lo que indica.
+                      </div>
+                    )}
+
+                    <div className="tarea-pie">
+                      <span className="muted">
+                        {tarea.origen && `Detectado en ${tarea.origen} · `}
+                        {new Date(tarea.created_at).toLocaleDateString("es-PE")}
+                      </span>
+
+                      {!tarea.columna_sugerida && (
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          onClick={() => completarTarea(tarea.id)}
+                        >
+                          Marcar como hecha
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+
+          {completadas.length > 0 && (
+            <>
+              <div className="chart-title" style={{ marginTop: "24px" }}>
+                Completadas ({completadas.length})
+              </div>
+
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Tarea</th>
+                      <th>Columna</th>
+                      <th>Cierre</th>
+                      <th>Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {completadas.map((tarea) => (
+                      <tr key={tarea.id}>
+                        <td className="cell-main ellipsis">{tarea.titulo}</td>
+                        <td className="muted">{tarea.columna_sugerida || "-"}</td>
+                        <td>
+                          <span className="chip chip-tipo">
+                            {tarea.cierre === "automatico" ? "Automatico" : "Manual"}
+                          </span>
+                        </td>
+                        <td className="muted">
+                          {tarea.completada_at
+                            ? new Date(tarea.completada_at).toLocaleDateString("es-PE")
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </Modal>
       )}
 

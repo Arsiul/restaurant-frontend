@@ -12,6 +12,7 @@ import {
   ResponsiveContainer
 } from "recharts"
 import api, { getMessage, getUserName, getInitials, soles, miles } from "../api"
+import Modal from "../components/Modal"
 
 /**
  * Paleta de series validada para daltonismo sobre fondo claro:
@@ -57,13 +58,56 @@ const Comparar = () => {
   const [analizando, setAnalizando] = useState(false)
   const [error, setError] = useState("")
 
+  const [trabajadores, setTrabajadores] = useState([])
+  const [asignando, setAsignando] = useState(null)
+  const [guardando, setGuardando] = useState(false)
+
+  // Titulo del insight -> nombre de quien lo recibio, para no asignar
+  // dos veces lo mismo sin darse cuenta.
+  const [asignadas, setAsignadas] = useState({})
+
   useEffect(() => {
     api
       .get("/imports")
       .then((respuesta) => setLista(respuesta.data))
       .catch((problema) => setError(getMessage(problema)))
       .finally(() => setCargando(false))
+
+    api
+      .get("/tareas/trabajadores")
+      .then((respuesta) => setTrabajadores(respuesta.data))
+      .catch(() => {})
   }, [])
+
+  const asignar = async () => {
+    if (!asignando.trabajador) {
+      return setAsignando({ ...asignando, error: "Elige a que trabajador se le asigna" })
+    }
+
+    setGuardando(true)
+
+    try {
+      const { insight } = asignando
+
+      await api.post("/tareas", {
+        titulo: insight.titulo,
+        mensaje: insight.mensaje,
+        nivel: insight.nivel,
+        accion: insight.accion || null,
+        origen: segunda ? segunda.empresa : primera.empresa,
+        asignadaA: asignando.trabajador
+      })
+
+      const nombre = trabajadores.find((t) => t.id === asignando.trabajador)?.nombre || "el trabajador"
+
+      setAsignadas({ ...asignadas, [insight.titulo]: nombre })
+      setAsignando(null)
+    } catch (problema) {
+      setAsignando({ ...asignando, error: getMessage(problema) })
+    } finally {
+      setGuardando(false)
+    }
+  }
 
   const alternar = (id) => {
     setResultado(null)
@@ -310,24 +354,43 @@ const Comparar = () => {
               {segunda ? "Por que vende mas" : "Lectura del archivo"}
             </div>
 
-            {resultado.insights.map((insight) => (
-              <div className="insight" key={insight.titulo}>
-                <div className={`insight-bar ${insight.nivel}`} />
+            {resultado.insights.map((insight) => {
+              const asignada = asignadas[insight.titulo]
 
-                <div>
-                  <h4>{insight.titulo}</h4>
-                  <p>{insight.mensaje}</p>
+              return (
+                <div className="insight" key={insight.titulo}>
+                  <div className={`insight-bar ${insight.nivel}`} />
 
-                  {insight.accion && (
-                    <div className="insight-accion">
-                      Accion sugerida: agregar la columna <code>{insight.accion.columna}</code> (
-                      {insight.accion.tipoDato}) a la tabla de la empresa. El trabajador puede
-                      hacerlo desde su modulo.
+                  <div>
+                    <h4>{insight.titulo}</h4>
+                    <p>{insight.mensaje}</p>
+
+                    {insight.accion && (
+                      <div className="insight-accion">
+                        Accion sugerida: agregar la columna <code>{insight.accion.columna}</code> (
+                        {insight.accion.tipoDato}) a la tabla de la empresa.
+                      </div>
+                    )}
+
+                    <div className="insight-pie">
+                      {asignada ? (
+                        <span className="asignada-ok">
+                          Asignada a {asignada}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-light btn-sm"
+                          onClick={() => setAsignando({ insight, trabajador: "", error: "" })}
+                        >
+                          Asignar tarea al trabajador
+                        </button>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="grid-2">
@@ -373,6 +436,67 @@ const Comparar = () => {
             ))}
           </div>
         </>
+      )}
+
+      {asignando && (
+        <Modal
+          title="Asignar tarea al trabajador"
+          onClose={() => setAsignando(null)}
+          footer={(cerrar) => (
+            <>
+              <button type="button" className="btn btn-ghost" onClick={cerrar}>
+                Cancelar
+              </button>
+              <button type="button" className="btn" onClick={asignar} disabled={guardando}>
+                {guardando ? "Asignando..." : "Asignar tarea"}
+              </button>
+            </>
+          )}
+        >
+          <div className="tarea-previa">
+            <div className={`insight-bar ${asignando.insight.nivel}`} />
+            <div>
+              <h4>{asignando.insight.titulo}</h4>
+              <p>{asignando.insight.mensaje}</p>
+            </div>
+          </div>
+
+          {asignando.insight.accion ? (
+            <div className="insight-accion" style={{ marginBottom: "18px" }}>
+              La tarea le va a indicar que cree la columna{" "}
+              <code>{asignando.insight.accion.columna}</code> de tipo{" "}
+              <strong>{asignando.insight.accion.tipoDato}</strong>. Se cerrara sola cuando esa
+              columna exista.
+            </div>
+          ) : (
+            <div className="alert alert-info">
+              Este insight no pide una columna concreta, asi que la tarea es de lectura: el
+              trabajador la marca como hecha cuando haya actuado.
+            </div>
+          )}
+
+          <div className="field">
+            <label>Trabajador que la recibe</label>
+            <select
+              value={asignando.trabajador}
+              onChange={(e) => setAsignando({ ...asignando, trabajador: e.target.value })}
+              autoFocus
+            >
+              <option value="">Elegir trabajador...</option>
+              {trabajadores.map((trabajador) => (
+                <option key={trabajador.id} value={trabajador.id}>
+                  {trabajador.nombre} ({trabajador.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {trabajadores.length === 0 && (
+            <div className="alert alert-error">No hay trabajadores registrados</div>
+          )}
+
+          {asignando.error && <div className="alert alert-error">{asignando.error}</div>}
+        </Modal>
       )}
     </>
   )

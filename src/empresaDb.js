@@ -104,6 +104,35 @@ export const actualizarCelda = ({ tabla, id, columna, valor }) =>
 export const materializar = (importId, estructura) =>
   llamar("empresa_materializar", { p_import_id: importId, p_estructura: estructura })
 
+/**
+ * Tareas que el administrador le asigno a este trabajador. Se leen por
+ * PostgREST normal: RLS ya limita cada fila a su destinatario, asi que
+ * no hace falta filtrar por usuario desde aqui.
+ */
+export const tareas = async () => {
+  const { data, error } = await conexion()
+    .from("tareas")
+    .select("id,titulo,mensaje,nivel,columna_sugerida,tipo_sugerido,ejemplo,origen,tabla_destino,estado,created_at,completada_at,cierre")
+    .order("estado", { ascending: true })
+    .order("created_at", { ascending: false })
+
+  if (error) throw new Error(traducir(error))
+
+  return data
+}
+
+/** Cierre manual, para las tareas que no piden crear ninguna columna. */
+export const completarTarea = async (id) => {
+  const { error } = await conexion()
+    .from("tareas")
+    .update({ estado: "completada", completada_at: new Date().toISOString(), cierre: "manual" })
+    .eq("id", id)
+
+  if (error) throw new Error(traducir(error))
+
+  return true
+}
+
 /** La bitacora se lee por PostgREST normal, protegida por RLS. */
 export const cambios = async () => {
   const { data, error } = await conexion()

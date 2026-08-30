@@ -104,6 +104,7 @@ archivos importados y no una operacion de base de datos.
 | Crear tabla | Ejecuta un `CREATE TABLE` con prefijo `emp_`, para registrar algo que no existia |
 | Editar celda | Clic sobre cualquier celda para completar los datos de una columna nueva |
 | Eliminar columna | Desde la cabecera, con confirmacion |
+| Mis tareas | Abre las tareas que le asigno el administrador |
 
 | Accion en pantalla | Funcion que se llama |
 |---|---|
@@ -147,6 +148,7 @@ Se eligen uno o dos archivos. Con uno se analiza solo; con dos se comparan.
 | Grafico de barras | Ingresos por categoria, agrupados por restaurante |
 | Grafico de lineas | Evolucion de ingresos por periodo |
 | Insights | Por que el otro vende mas, con la accion sugerida |
+| Asignar tarea | Cada insight se puede convertir en una orden para un trabajador |
 | Tablas | Productos con mas ingreso y capacidades que registra cada uno |
 
 Los indicadores van en barras y no en un grafico porque ingresos, unidades y

@@ -2056,3 +2056,122 @@ tbody tr.selected .row-actions button:hover {
 .checkbox:hover input {
   transform: scale(1.1);
 }
+
+/* ---------- tareas ---------- */
+
+.btn-tareas {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-tareas.con-pendientes {
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  animation: aparecer-escala var(--medio) var(--curva) backwards;
+}
+
+.tarea,
+.tarea-previa {
+  display: flex;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  animation: aparecer var(--medio) var(--curva) backwards;
+}
+
+.tarea:last-of-type {
+  border-bottom: none;
+}
+
+.tarea-previa {
+  border-bottom: none;
+  padding-top: 0;
+  margin-bottom: 4px;
+}
+
+.tarea-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.tarea h4,
+.tarea-previa h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.tarea p,
+.tarea-previa p {
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 13px;
+}
+
+.tarea-instruccion {
+  margin-top: 12px;
+  background: var(--primary-soft);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+
+.tarea-instruccion .muted {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.tarea-lectura {
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.tarea-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.insight-pie {
+  margin-top: 12px;
+}
+
+.asignada-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  animation: aparecer var(--medio) var(--curva) backwards;
+}
+
+.asignada-ok::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
