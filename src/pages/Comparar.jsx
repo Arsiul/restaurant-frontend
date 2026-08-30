@@ -372,21 +372,24 @@ const Comparar = () => {
                       </div>
                     )}
 
-                    <div className="insight-pie">
-                      {asignada ? (
-                        <span className="asignada-ok">
-                          Asignada a {asignada}
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn btn-light btn-sm"
-                          onClick={() => setAsignando({ insight, trabajador: "", error: "" })}
-                        >
-                          Asignar tarea al trabajador
-                        </button>
-                      )}
-                    </div>
+                    {/* Solo se asigna lo que se puede ejecutar. Al analizar
+                        un archivo suelto no hay columna que pedir, asi que
+                        ahi no aparece el boton. */}
+                    {insight.accion && (
+                      <div className="insight-pie">
+                        {asignada ? (
+                          <span className="asignada-ok">Asignada a {asignada}</span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-light btn-sm"
+                            onClick={() => setAsignando({ insight, trabajador: "", error: "" })}
+                          >
+                            Asignar tarea al trabajador
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               )
@@ -461,19 +464,12 @@ const Comparar = () => {
             </div>
           </div>
 
-          {asignando.insight.accion ? (
-            <div className="insight-accion" style={{ marginBottom: "18px" }}>
-              La tarea le va a indicar que cree la columna{" "}
-              <code>{asignando.insight.accion.columna}</code> de tipo{" "}
-              <strong>{asignando.insight.accion.tipoDato}</strong>. Se cerrara sola cuando esa
-              columna exista.
-            </div>
-          ) : (
-            <div className="alert alert-info">
-              Este insight no pide una columna concreta, asi que la tarea es de lectura: el
-              trabajador la marca como hecha cuando haya actuado.
-            </div>
-          )}
+          <div className="insight-accion" style={{ marginBottom: "18px" }}>
+            La tarea le va a indicar que cree la columna{" "}
+            <code>{asignando.insight.accion.columna}</code> de tipo{" "}
+            <strong>{asignando.insight.accion.tipoDato}</strong> en la tabla de la empresa. Se
+            cerrara sola cuando esa columna exista.
+          </div>
 
           <div className="field">
             <label>Trabajador que la recibe</label>
