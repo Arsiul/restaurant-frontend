@@ -1,6 +1,8 @@
 import { useState } from "react"
 
-const Modal = ({ title, onClose, children, footer }) => {
+// "ancho" ensancha el modal para el contenido tabular, donde 460px obligan
+// a desplazarse en horizontal para leer cualquier archivo de varias columnas.
+const Modal = ({ title, onClose, children, footer, ancho = false }) => {
   const [closing, setClosing] = useState(false)
 
   const close = () => {
@@ -12,7 +14,10 @@ const Modal = ({ title, onClose, children, footer }) => {
 
   return (
     <div className={closing ? "overlay closing" : "overlay"} onClick={close}>
-      <div className="modal" onClick={(event) => event.stopPropagation()}>
+      <div
+        className={ancho ? "modal modal-ancho" : "modal"}
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="modal-head">
           <h3>{title}</h3>
           <button type="button" onClick={close}>

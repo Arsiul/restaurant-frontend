@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
-import api, { getMessage, saveSession } from "../api"
+import api, { getMessage, saveSession, inicioSegunRol } from "../api"
 
 const LENGTH = 8
 
@@ -50,8 +50,8 @@ const Register = () => {
       const { data } = await api.post("/auth/register", { email, password, fullName })
 
       if (data.verified) {
-        saveSession(data.token, data.user)
-        navigate("/platos")
+        saveSession(data.token, data.user, data.perfil)
+        navigate(inicioSegunRol())
         return
       }
 
@@ -80,8 +80,8 @@ const Register = () => {
 
     try {
       const { data } = await api.post("/auth/verify", { email, token })
-      saveSession(data.token, data.user)
-      navigate("/platos")
+      saveSession(data.token, data.user, data.perfil)
+      navigate(inicioSegunRol())
     } catch (problem) {
       setCode(Array(LENGTH).fill(""))
       if (boxes.current[0]) boxes.current[0].focus()

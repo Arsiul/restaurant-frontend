@@ -1,6 +1,6 @@
 # Frontend
 
-Interfaz del sistema de menus de restaurante. React con Vite.
+Interfaz del sistema de analisis competitivo de restaurantes. React con Vite.
 
 ## Requisitos
 
@@ -13,42 +13,50 @@ npm install
 npm run dev
 ```
 
-La aplicacion queda disponible en `http://localhost:5173`.
+La aplicacion queda disponible en `http://localhost:5000`.
 
 ## Variables de entorno
-
-Archivo `.env` en la raiz de esta carpeta.
 
 | Variable | Descripcion |
 |---|---|
 | `VITE_API_URL` | Direccion base de la API |
+| `VITE_SUPABASE_URL` | Endpoint del proyecto de Supabase |
+| `VITE_SUPABASE_ANON_KEY` | Clave publicable del proyecto |
 
-La aplicacion no conoce las credenciales de Supabase. Solo se comunica con el
-backend.
+Vite reemplaza las variables `VITE_*` por su valor dentro del bundle durante el
+build, asi que todo lo que se declare aqui queda visible en el navegador. Por eso
+solo se usa la clave publicable, que esta pensada para eso: no autoriza nada por
+si sola. Ni el token de la Management API ni la clave de servicio pasan por el
+frontend.
+
+## Cuentas de prueba
+
+| Correo | Contrasena | Rol |
+|---|---|---|
+| `admin@rimberio.com` | `Admin2026!` | Administrador |
+| `trabajador@rimberio.com` | `Trabajo2026!` | Trabajador |
 
 ## Estructura de carpetas
 
 ```
 frontend/
-  index.html                   Documento base
-  vite.config.js               Configuracion de Vite
-  package.json
-  .env
   src/
     main.jsx                   Punto de entrada y enrutador
-    App.jsx                    Definicion de rutas publicas y privadas
-    api.js                     Cliente Axios y manejo de sesion
-    index.css                  Variables de diseno y estilos de toda la interfaz
+    App.jsx                    Rutas publicas y privadas por rol
+    api.js                     Cliente Axios, sesion y helpers de rol
+    empresaDb.js               Acceso directo a la base para el modulo del trabajador
+    index.css                  Variables de diseno y estilos
     components/
-      Layout.jsx               Barra lateral, datos del usuario y cierre de sesion
+      Layout.jsx               Barra lateral, menu segun el rol
       Modal.jsx                Ventana modal reutilizable
-      Table.jsx                Tabla con paginacion y seleccion de fila
+      Confirm.jsx              Confirmacion de acciones destructivas
     pages/
       Login.jsx                Inicio de sesion
       Register.jsx             Registro y verificacion por codigo
-      Dishes.jsx               Modulo 1
-      Menu.jsx                 Modulo 2
-      Report.jsx               Modulo 3
+      Importar.jsx             Trabajador, modulo 1
+      DatosEmpresa.jsx         Trabajador, modulo 2
+      Archivos.jsx             Administrador, modulo 1
+      Comparar.jsx             Administrador, modulo 2
 ```
 
 ## Rutas
@@ -57,89 +65,121 @@ frontend/
 |---|---|---|
 | `/login` | Publica | Inicio de sesion |
 | `/registro` | Publica | Registro y verificacion |
-| `/platos` | Privada | Modulo 1 |
-| `/menu` | Privada | Modulo 2 |
-| `/reporte` | Privada | Modulo 3 |
+| `/importar` | Trabajador | Importar archivos |
+| `/datos-empresa` | Trabajador | Datos de la empresa |
+| `/archivos` | Administrador | Archivos cargados |
+| `/comparar` | Administrador | Comparar restaurantes |
 
-Las rutas privadas verifican el token antes de mostrar el contenido. Sin sesion
-redirigen a `/login`.
+Entrar por URL a un modulo de otro rol redirige al inicio que corresponda. Esa
+proteccion es solo de interfaz: el backend valida el rol en cada peticion, asi
+que editar el `localStorage` no da acceso a nada.
 
-## Manejo de sesion
+## Modulos del trabajador
 
-`api.js` concentra la comunicacion con el backend.
+### Importar archivos
 
-| Funcion | Descripcion |
+Dos zonas de carga separadas, cada una con su color:
+
+| Zona | Que hace |
 |---|---|
-| Interceptor de peticion | Agrega la cabecera `Authorization` en cada llamada |
-| Interceptor de respuesta | Ante un codigo 401 limpia la sesion y redirige a `/login` |
-| `saveSession` | Guarda token y datos del usuario |
-| `getUser` | Devuelve los datos del usuario |
-| `isLogged` | Indica si existe una sesion activa |
-| `clearSession` | Elimina la sesion |
+| CSV o Excel de la empresa | Guarda el archivo y ademas vuelca los datos en `empresa_datos`, la tabla que luego se amplia |
+| Importar de otra empresa | Guarda el archivo como referencia de la competencia |
 
-El token se almacena en `localStorage`.
+Ambas aceptan arrastrar y soltar. Al terminar se abre un resumen con la
+estructura detectada: cada columna del archivo, el nombre que tomo en la base y
+el tipo deducido.
 
-## Modulos
+### Datos de la empresa
 
-### Modulo 1: Platos
+Muestra la tabla de la empresa con las columnas que tenga en ese momento.
 
-Listado del catalogo con busqueda por nombre, filtro por categoria y pestanas
-por estado. Incluye dos acciones principales:
+**Este modulo no pasa por el backend.** Todas sus operaciones salen del
+navegador contra funciones RPC de Postgres, a traves de `src/empresaDb.js`. La
+unica llamada a la API es la de sugerencias, que es un analisis sobre los
+archivos importados y no una operacion de base de datos.
 
 | Accion | Descripcion |
 |---|---|
-| Nuevo plato | Abre un formulario modal para registrar un plato |
-| Importar | Carga masiva desde archivo CSV o Excel con resumen de resultados |
+| Agregar columna | Ejecuta un `ALTER TABLE` real. Pide nombre, tipo, valor por defecto y motivo |
+| Crear tabla | Ejecuta un `CREATE TABLE` con prefijo `emp_`, para registrar algo que no existia |
+| Editar celda | Clic sobre cualquier celda para completar los datos de una columna nueva |
+| Eliminar columna | Desde la cabecera, con confirmacion |
 
-Cada fila permite editar el plato o desactivarlo. La tabla no muestra
-identificadores: la categoria aparece por nombre y el estado como indicador
-visual.
-
-### Modulo 2: Menu
-
-Muestra los platos ya registrados junto con el menu y la seccion a la que
-pertenecen, mas el precio de esa carta. Acciones disponibles:
-
-| Accion | Descripcion |
+| Accion en pantalla | Funcion que se llama |
 |---|---|
-| Asignar plato | Selecciona plato, menu y seccion, y define el precio |
-| Precio | Edita precio, rango, posicion, nota y destacado |
-| Plato | Edita el plato, reflejandose en el modulo 1 |
-| Quitar | Retira el plato de la carta sin eliminarlo del catalogo |
+| Cargar la tabla | `empresa_leer` |
+| Agregar columna | `empresa_agregar_columna` |
+| Crear tabla | `empresa_crear_tabla` |
+| Editar celda | `empresa_actualizar_celda` |
+| Eliminar columna | `empresa_eliminar_columna` |
+| Importar archivo propio | `empresa_materializar`, desde la pantalla de importacion |
 
-El desplegable de secciones se completa segun el menu elegido.
+La validacion vive dentro de las funciones, en la base: verifican que quien
+llama tenga rol de trabajador, que la tabla sea `empresa_datos` o `emp_*`, y que
+el nombre y el tipo sean validos antes de armar el SQL. Editar el `localStorage`
+o llamar a la funcion desde la consola no saltea ninguno de esos controles.
 
-### Modulo 3: Reporte
+Arriba aparece un bloque de sugerencias con las columnas que la competencia
+registra y la empresa no, tomadas de la comparacion mas reciente. Cada una tiene
+un boton que abre el formulario ya completo.
 
-Solo lectura. Presenta seis indicadores, cuatro visualizaciones y un bloque de
-recomendaciones generadas a partir de los datos.
+Abajo queda la bitacora de todos los cambios de estructura aplicados, con su
+motivo.
+
+## Modulos del administrador
+
+### Archivos cargados
+
+Todos los archivos importados por los trabajadores, en tarjetas. Cada tarjeta
+muestra el restaurante, el archivo, las filas, las columnas y quien lo cargo. El
+borde izquierdo distingue los datos propios de los de la competencia.
+
+Al hacer clic se abre un modal con el contenido del archivo, con sus columnas
+originales y la cabecera fija al desplazar.
+
+### Comparar restaurantes
+
+Se eligen uno o dos archivos. Con uno se analiza solo; con dos se comparan.
 
 | Elemento | Contenido |
 |---|---|
-| Indicadores | Platos activos, menus publicados, platos en carta, precio promedio, unidades vendidas e ingresos |
-| Grafico circular | Distribucion de platos por categoria |
-| Grafico de barras | Platos con mas apariciones en cartas |
-| Grafico de lineas | Ingresos por fecha |
-| Tabla | Rango de precios minimo y maximo por plato |
-| Recomendaciones | Observaciones generadas por el backend |
+| Indicadores | Ingresos, unidades, ticket promedio y productos, en barras enfrentadas |
+| Grafico de barras | Ingresos por categoria, agrupados por restaurante |
+| Grafico de lineas | Evolucion de ingresos por periodo |
+| Insights | Por que el otro vende mas, con la accion sugerida |
+| Tablas | Productos con mas ingreso y capacidades que registra cada uno |
+
+Los indicadores van en barras y no en un grafico porque ingresos, unidades y
+ticket tienen escalas incomparables entre si: ponerlos en un mismo eje haria
+invisibles a los dos ultimos.
+
+## Colores de las series
+
+| Serie | Color |
+|---|---|
+| Nuestra empresa | `#c1541f` |
+| Competencia | `#1a6fb0` |
+
+El par esta validado para daltonismo sobre fondo claro: delta E de 28 en vision
+normal y 20.8 en protanopia, ambos por encima del umbral de 15. La combinacion
+de dos tonos calidos de la paleta original no pasaba esa prueba, por eso la
+competencia usa azul y no el dorado de marca.
 
 ## Estilos
 
 No se utilizan librerias de estilos. Todo el diseno esta en `src/index.css`,
-organizado por bloques y apoyado en variables definidas en `:root`.
+apoyado en variables definidas en `:root`.
 
 | Variable | Uso |
 |---|---|
 | `--primary` | Color principal de la interfaz |
-| `--accent` | Color de enlaces secundarios y acciones destructivas |
+| `--accent` | Enlaces secundarios |
 | `--bg` | Fondo de la aplicacion |
 | `--surface` | Fondo de tarjetas y tablas |
-| `--text` | Color de texto principal |
-| `--muted` | Color de texto secundario |
-| `--border` | Color de bordes |
-| `--radius` | Radio de bordes de tarjetas |
-
-Modificar estas variables cambia el aspecto de toda la aplicacion.
+| `--text` | Texto principal |
+| `--muted` | Texto secundario |
+| `--border` | Bordes |
+| `--radius` | Radio de bordes |
 
 ## Construccion
 

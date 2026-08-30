@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import api, { getMessage, saveSession } from "../api"
+import api, { getMessage, saveSession, inicioSegunRol } from "../api"
 
 const Login = () => {
   const navigate = useNavigate()
@@ -16,8 +16,8 @@ const Login = () => {
 
     try {
       const { data } = await api.post("/auth/login", { email, password })
-      saveSession(data.token, data.user)
-      navigate("/platos")
+      saveSession(data.token, data.user, data.perfil)
+      navigate(inicioSegunRol())
     } catch (problem) {
       const pending = problem.response && problem.response.data && problem.response.data.pending
 

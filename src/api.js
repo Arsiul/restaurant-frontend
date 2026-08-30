@@ -16,6 +16,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("token")
       localStorage.removeItem("user")
+      localStorage.removeItem("perfil")
       window.location.href = "/login"
     }
     return Promise.reject(error)
@@ -29,10 +30,31 @@ export const getMessage = (error) => {
   return "No se pudo conectar con el servidor"
 }
 
-export const saveSession = (token, user) => {
+export const saveSession = (token, user, perfil) => {
   localStorage.setItem("token", token)
   localStorage.setItem("user", JSON.stringify(user || {}))
+  localStorage.setItem("perfil", JSON.stringify(perfil || {}))
 }
+
+// El perfil guardado solo decide que se dibuja. Cada endpoint vuelve a
+// verificar el rol contra la base, asi que editarlo a mano no da acceso.
+export const getPerfil = () => {
+  try {
+    return JSON.parse(localStorage.getItem("perfil")) || {}
+  } catch (error) {
+    return {}
+  }
+}
+
+export const getRol = () => getPerfil().role || ""
+
+export const esAdmin = () => getRol() === "admin"
+
+export const esTrabajador = () => getRol() === "trabajador"
+
+export const getEmpresa = () => getPerfil().empresa || "Mi empresa"
+
+export const inicioSegunRol = () => (esAdmin() ? "/archivos" : "/importar")
 
 export const getUser = () => {
   try {
@@ -43,6 +65,9 @@ export const getUser = () => {
 }
 
 export const getUserName = () => {
+  const perfil = getPerfil()
+  if (perfil.full_name) return perfil.full_name
+
   const user = getUser()
   const meta = user.user_metadata || {}
 
@@ -66,6 +91,16 @@ export const isLogged = () => Boolean(localStorage.getItem("token"))
 export const clearSession = () => {
   localStorage.removeItem("token")
   localStorage.removeItem("user")
+  localStorage.removeItem("perfil")
 }
+
+/** Formatea importes en soles para toda la interfaz. */
+export const soles = (valor) =>
+  `S/ ${Number(valor || 0).toLocaleString("es-PE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`
+
+export const miles = (valor) => Number(valor || 0).toLocaleString("es-PE")
 
 export default api

@@ -1,13 +1,25 @@
 import { useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
-import { clearSession, getUserName, getInitials } from "../api"
+import { clearSession, getUserName, getInitials, getRol, getEmpresa, esAdmin } from "../api"
 import Confirm from "./Confirm"
+
+const MENU = {
+  trabajador: [
+    { to: "/importar", label: "Importar archivos" },
+    { to: "/datos-empresa", label: "Datos de la empresa" }
+  ],
+  admin: [
+    { to: "/archivos", label: "Archivos cargados" },
+    { to: "/comparar", label: "Comparar restaurantes" }
+  ]
+}
 
 const Layout = ({ children }) => {
   const navigate = useNavigate()
   const [asking, setAsking] = useState(false)
 
-  const name = getUserName()
+  const rol = getRol()
+  const enlaces = MENU[rol] || []
 
   const logout = () => {
     clearSession()
@@ -23,16 +35,25 @@ const Layout = ({ children }) => {
         </div>
 
         <nav className="sidebar-nav">
-          <NavLink to="/platos">Platos</NavLink>
-          <NavLink to="/menu">Menu</NavLink>
-          <NavLink to="/reporte">Reporte</NavLink>
+          {enlaces.map((enlace) => (
+            <NavLink key={enlace.to} to={enlace.to}>
+              {enlace.label}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="sidebar-foot">
           <div className="sidebar-user">
             <span className="avatar avatar-light">{getInitials()}</span>
-            <span className="sidebar-name">{name}</span>
+            <div className="sidebar-ident">
+              <span className="sidebar-name">{getUserName()}</span>
+              <span className={`rol-chip ${esAdmin() ? "rol-admin" : "rol-trabajador"}`}>
+                {esAdmin() ? "Administrador" : "Trabajador"}
+              </span>
+            </div>
           </div>
+
+          <span className="sidebar-empresa">{getEmpresa()}</span>
 
           <button type="button" className="btn btn-logout" onClick={() => setAsking(true)}>
             Cerrar sesion
