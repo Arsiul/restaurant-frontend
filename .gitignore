@@ -15,6 +15,7 @@ dist/
 .env.*
 !.env.example
 
+
 # Registros
 *.log
 npm-debug.log*
