@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
-import api, { getMessage, saveSession, inicioSegunRol } from "../api"
+import api, { getMessage, saveSession, inicioSegunRol, getDominio, aUsuario } from "../api"
 
 const LENGTH = 8
 
@@ -10,7 +10,13 @@ const Register = () => {
 
   const [step, setStep] = useState("form")
   const [fullName, setFullName] = useState("")
+
+  // El usuario es lo que se escribe; el correo es lo que se autentica, y
+  // sale de sumarle el dominio de la empresa. En el paso de verificacion se
+  // muestra el correo, que es adonde llego el codigo.
+  const [usuario, setUsuario] = useState("")
   const [email, setEmail] = useState("")
+  const [dominio, setDominio] = useState("")
   const [password, setPassword] = useState("")
   const [repeat, setRepeat] = useState("")
   const [code, setCode] = useState(Array(LENGTH).fill(""))
@@ -20,6 +26,10 @@ const Register = () => {
   const [wait, setWait] = useState(0)
 
   const boxes = useRef([])
+
+  useEffect(() => {
+    getDominio().then(setDominio)
+  }, [])
 
   useEffect(() => {
     if (location.state && location.state.step === "verify") {
@@ -47,7 +57,7 @@ const Register = () => {
     setLoading(true)
 
     try {
-      const { data } = await api.post("/auth/register", { email, password, fullName })
+      const { data } = await api.post("/auth/register", { usuario, password, fullName })
 
       if (data.verified) {
         saveSession(data.token, data.user, data.perfil)
@@ -55,6 +65,7 @@ const Register = () => {
         return
       }
 
+      setEmail(data.email)
       setStep("verify")
       setNotice("Revisa tu correo e ingresa el codigo de 8 digitos.")
       setWait(60)
@@ -79,7 +90,7 @@ const Register = () => {
     setLoading(true)
 
     try {
-      const { data } = await api.post("/auth/verify", { email, token })
+      const { data } = await api.post("/auth/verify", { usuario: email, token })
       saveSession(data.token, data.user, data.perfil)
       navigate(inicioSegunRol())
     } catch (problem) {
@@ -96,7 +107,7 @@ const Register = () => {
     setLoading(true)
 
     try {
-      await api.post("/auth/resend", { email })
+      await api.post("/auth/resend", { usuario: email })
       setNotice("Codigo reenviado. Revisa tu bandeja y la carpeta de spam.")
       setWait(60)
     } catch (problem) {
@@ -179,15 +190,23 @@ const Register = () => {
             </div>
 
             <div className="field">
-              <label htmlFor="email">Correo electronico</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="correo@ejemplo.com"
-                required
-              />
+              <label htmlFor="usuario">Usuario</label>
+              <div className="input-dominio">
+                <input
+                  id="usuario"
+                  type="text"
+                  value={usuario}
+                  onChange={(event) => setUsuario(event.target.value)}
+                  placeholder="jperez"
+                  required
+                />
+                {dominio && <span>@{dominio}</span>}
+              </div>
+              <span className="muted">
+                {aUsuario(usuario)
+                  ? `Iniciaras sesion como ${aUsuario(usuario)}${dominio ? `@${dominio}` : ""}`
+                  : "Toda la empresa entra con un correo del mismo dominio"}
+              </span>
             </div>
 
             <div className="field">

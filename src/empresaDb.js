@@ -41,6 +41,15 @@ const conexion = () => {
   return cliente
 }
 
+/** Id de la cuenta con la sesion abierta, para acotar lo que es "mio". */
+const miId = () => {
+  try {
+    return (JSON.parse(localStorage.getItem("perfil")) || {}).id || ""
+  } catch (error) {
+    return ""
+  }
+}
+
 /** Traduce el error de Postgres a algo que se pueda mostrar en pantalla. */
 const traducir = (error) => {
   const texto = error.message || ""
@@ -105,14 +114,18 @@ export const materializar = (importId, estructura) =>
   llamar("empresa_materializar", { p_import_id: importId, p_estructura: estructura })
 
 /**
- * Tareas que el administrador le asigno a este trabajador. Se leen por
- * PostgREST normal: RLS ya limita cada fila a su destinatario, asi que
- * no hace falta filtrar por usuario desde aqui.
+ * Tareas asignadas a quien esta mirando la pantalla.
+ *
+ * Se filtra por destinatario a proposito, aunque RLS ya acote las filas:
+ * para el administrador RLS devuelve las tareas de todo el mundo, y bajo un
+ * boton que dice "Mis tareas" eso seria mentira. Ademas el trabajador solo
+ * puede cerrar las suyas, asi que las ajenas ni siquiera serian accionables.
  */
 export const tareas = async () => {
   const { data, error } = await conexion()
     .from("tareas")
     .select("id,titulo,mensaje,nivel,columna_sugerida,tipo_sugerido,ejemplo,origen,tabla_destino,estado,created_at,completada_at,cierre")
+    .eq("asignada_a", miId())
     .order("estado", { ascending: true })
     .order("created_at", { ascending: false })
 

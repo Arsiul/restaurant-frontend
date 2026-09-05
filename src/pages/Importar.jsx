@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import api, { getMessage, getUserName, getInitials, getEmpresa, miles } from "../api"
 import * as db from "../empresaDb"
 import Modal from "../components/Modal"
+import ResumenImport from "../components/ResumenImport"
 
 /**
  * Modulo 1 del trabajador. Dos zonas de carga separadas: los archivos de
@@ -144,6 +145,7 @@ const Importar = () => {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
   const [resultado, setResultado] = useState(null)
+  const [resumen, setResumen] = useState(null)
 
   const cargar = () => {
     api
@@ -202,6 +204,7 @@ const Importar = () => {
                   <th style={{ textAlign: "right" }}>Filas</th>
                   <th style={{ textAlign: "right" }}>Columnas</th>
                   <th>Fecha</th>
+                  <th style={{ textAlign: "right" }}>Resumen</th>
                 </tr>
               </thead>
               <tbody>
@@ -222,6 +225,15 @@ const Importar = () => {
                     <td className="muted">
                       {new Date(item.created_at).toLocaleDateString("es-PE")}
                     </td>
+                    <td style={{ textAlign: "right" }}>
+                      <button
+                        type="button"
+                        className="btn btn-light btn-sm"
+                        onClick={() => setResumen(item)}
+                      >
+                        Ver resumen
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -231,7 +243,7 @@ const Importar = () => {
       </div>
 
       {resultado && (
-        <Modal title="Archivo importado" onClose={() => setResultado(null)}>
+        <Modal ancho title="Archivo importado" onClose={() => setResultado(null)}>
           <div className="metrics metrics-3">
             <div className="metric">
               <span>Filas cargadas</span>
@@ -251,27 +263,17 @@ const Importar = () => {
             Estructura reconocida en <strong>{resultado.importacion.archivo}</strong>:
           </p>
 
-          <div className="table-wrap" style={{ maxHeight: "260px", overflowY: "auto" }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Columna del archivo</th>
-                  <th>Nombre en la base</th>
-                  <th>Tipo deducido</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultado.estructura.map((campo) => (
-                  <tr key={campo.columna}>
-                    <td className="cell-main">{campo.original}</td>
-                    <td className="muted">{campo.columna}</td>
-                    <td>
-                      <span className="chip chip-tipo">{campo.tipo}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* En rejilla y no en tabla: un archivo de veinte columnas cabe
+              entero a lo ancho, sin obligar a desplazarse a los lados ni a
+              recorrer una lista larguisima hacia abajo. */}
+          <div className="estructura-grid">
+            {resultado.estructura.map((campo) => (
+              <div className="estructura-campo" key={campo.columna}>
+                <strong>{campo.original}</strong>
+                <span className="muted">{campo.columna}</span>
+                <span className="chip chip-tipo">{campo.tipo}</span>
+              </div>
+            ))}
           </div>
 
           {resultado.materializacion && !resultado.materializacion.error && (
@@ -282,6 +284,20 @@ const Importar = () => {
             </div>
           )}
 
+          <div className="modal-acciones">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                const importacion = resultado.importacion
+                setResultado(null)
+                setResumen(importacion)
+              }}
+            >
+              Ver resumen y graficos
+            </button>
+          </div>
+
           {resultado.materializacion && resultado.materializacion.error && (
             <div className="alert alert-error" style={{ marginTop: "16px" }}>
               El archivo quedo guardado, pero no se pudo volcar a la tabla de la empresa:{" "}
@@ -290,6 +306,7 @@ const Importar = () => {
           )}
         </Modal>
       )}
+      {resumen && <ResumenImport importacion={resumen} onClose={() => setResumen(null)} />}
     </>
   )
 }

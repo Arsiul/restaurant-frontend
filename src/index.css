@@ -1,21 +1,42 @@
 :root {
-  --primary: #c1541f;
-  --primary-dark: #a3431a;
-  --primary-soft: #f9e9df;
-  --accent: #c08a2e;
-  --dark: #2a1a12;
-  --dark-soft: #3d2718;
-  --bg: #faf6f0;
-  --surface: #ffffff;
-  --text: #26170f;
-  --muted: #8d7663;
-  --border: #efe4d8;
-  --green: #3f7d4f;
-  --danger: #b8391f;
-  --orange: #c08a2e;
-  --radius: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 4px 24px rgba(38, 23, 15, 0.07);
+  /* Acento calido sobre fondo oscuro. Es el color de las acciones, los
+     importes y lo que este seleccionado; nada mas lo usa, para que no
+     pierda el significado de "esto es lo que importa aqui". */
+  --primary: #ef5a3d;
+  --primary-dark: #d9482c;
+  --primary-soft: rgba(239, 90, 61, 0.14);
+  --primary-borde: rgba(239, 90, 61, 0.35);
+
+  --accent: #f0a02c;
+
+  /* Cuatro niveles de fondo. La jerarquia en oscuro se construye con
+     luminosidad y borde, no con sombra: una sombra sobre negro no se ve. */
+  --bg: #0d0d10;
+  --surface: #17171c;
+  --surface-2: #1f1f26;
+  --surface-3: #26262f;
+  --border: #2a2a33;
+  --border-suave: #21212a;
+
+  --text: #f4f4f6;
+  --muted: #8b8b98;
+  --tenue: #5f5f6b;
+
+  --green: #3ecf8e;
+  --danger: #e5484d;
+  --orange: #f0a02c;
+
+  /* Series de los graficos. El par se valido sobre el fondo de tarjeta:
+     delta E de 48.7 en vision normal, 55.1 en protanopia y 63.2 en
+     deuteranopia, con contraste 5.27 y 6.80 contra el fondo. El fondo
+     oscuro separa mejor este par que el claro anterior. */
+  --serie-propia: #ef5a3d;
+  --serie-otra: #4da3ff;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 9px;
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
   --font: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
@@ -51,8 +72,8 @@ textarea {
 }
 
 .auth-art {
-  background: linear-gradient(155deg, #1e130c 0%, #3d2718 45%, #6b4520 100%);
-  color: #f7f1e6;
+  background: linear-gradient(155deg, #12121a 0%, #1b1b24 42%, #3a1d16 100%);
+  color: var(--text);
   padding: 56px 48px;
   display: flex;
   flex-direction: column;
@@ -77,7 +98,7 @@ textarea {
 }
 
 .auth-stats strong {
-  color: #e0b45f;
+  color: var(--accent);
 }
 
 .auth-brand {
@@ -95,7 +116,7 @@ textarea {
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  background: #ffffff;
+  background: var(--surface);
   padding: 2px;
   flex-shrink: 0;
 }
@@ -205,8 +226,8 @@ textarea {
 .field textarea {
   width: 100%;
   padding: 12px 14px;
-  background: var(--bg);
-  border: 1px solid transparent;
+  background: var(--surface-2);
+  border: 1px solid var(--border-suave);
   border-radius: var(--radius-sm);
   outline: none;
   transition: border-color 0.15s, background 0.15s;
@@ -215,7 +236,7 @@ textarea {
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  background: var(--surface);
+  background: var(--surface-3);
   border-color: var(--primary);
 }
 
@@ -252,7 +273,7 @@ textarea {
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary);
-  color: #ffffff;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s, opacity 0.15s;
@@ -277,7 +298,7 @@ textarea {
 }
 
 .btn-light:hover:not(:disabled) {
-  background: #f2dcca;
+  background: rgba(239, 90, 61, 0.24);
 }
 
 .btn-ghost {
@@ -296,7 +317,7 @@ textarea {
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #9b2f19;
+  background: #c23b3f;
 }
 
 .btn-sm {
@@ -315,13 +336,13 @@ textarea {
 }
 
 .alert-error {
-  background: #f9e4e0;
-  color: #a8391f;
+  background: rgba(229, 72, 77, 0.14);
+  color: var(--primary-dark);
 }
 
 .alert-success {
-  background: #e4f0e5;
-  color: #31663e;
+  background: rgba(62, 207, 142, 0.13);
+  color: var(--green);
 }
 
 .alert-info {
@@ -362,119 +383,156 @@ textarea {
   min-height: 100vh;
 }
 
-.sidebar {
-  width: 232px;
-  background: linear-gradient(170deg, #2a1a12 0%, #3d2718 100%);
-  color: #f7f1e6;
-  padding: 28px 18px;
+/* ---------- riel de navegacion ---------- */
+
+.riel {
+  width: 88px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border-suave);
   display: flex;
   flex-direction: column;
-  border-radius: 0 28px 28px 0;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 10px 16px;
   position: sticky;
   top: 0;
   height: 100vh;
 }
 
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  font-weight: 700;
-  padding: 0 12px 34px;
+.riel-marca {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  margin-bottom: 14px;
+  flex-shrink: 0;
 }
 
-.sidebar-nav {
+.riel-marca img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.riel-nav {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 6px;
+  width: 100%;
   flex: 1;
+  overflow-y: auto;
 }
 
-.sidebar-nav a {
-  padding: 12px 16px;
+/* Icono arriba y etiqueta corta debajo: el icono solo obliga a aprenderse
+   una simbologia, y el sistema tiene pantallas que no tienen un simbolo
+   evidente. La etiqueta cuesta 10 pixeles y elimina la adivinanza. */
+.riel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 11px 4px 9px;
+  border: none;
+  background: transparent;
   border-radius: var(--radius-sm);
-  color: rgba(247, 241, 230, 0.72);
+  color: var(--muted);
   text-decoration: none;
+  font-size: 10px;
   font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
-.sidebar-nav a:hover {
-  background: rgba(247, 241, 230, 0.1);
-  color: #f7f1e6;
-}
-
-.sidebar-nav a.active {
-  background: var(--primary);
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.sidebar-foot {
-  padding-top: 18px;
-  border-top: 1px solid rgba(247, 241, 230, 0.16);
-}
-
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 6px 14px;
-}
-
-.sidebar-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
+.riel-item span {
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.btn-logout {
-  width: 100%;
-  padding: 10px;
-  background: rgba(247, 241, 230, 0.14);
-  color: #ffffff;
-  font-size: 13px;
+.riel-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
 }
 
-.btn-logout:hover:not(:disabled) {
-  background: rgba(247, 241, 230, 0.24);
+.riel-item.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
 }
 
-.avatar-light {
-  background: rgba(247, 241, 230, 0.18);
+.riel-item.active .icono {
+  stroke-width: 2;
+}
+
+.riel-separador {
   width: 34px;
-  height: 34px;
-  font-size: 12px;
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
   flex-shrink: 0;
 }
 
-.topbar-user {
+.riel-pie {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding-left: 8px;
-  font-weight: 500;
-  white-space: nowrap;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
-.confirm-message {
-  font-size: 15px;
-  line-height: 1.6;
+.avatar-riel {
+  width: 36px;
+  height: 36px;
+  font-size: 12px;
+  cursor: default;
 }
 
-.confirm-detail {
-  margin-top: 10px;
+.riel-salir:hover {
+  background: rgba(229, 72, 77, 0.14);
+  color: var(--danger);
+}
+
+/* ---------- contexto del modulo ---------- */
+
+/* En que modulo del ERP se esta. Va en la cabecera y no en el riel porque
+   es contexto de lo que se ve, no un destino al que ir. */
+.contexto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.contexto-modulo {
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.contexto-sep {
+  color: var(--tenue);
+}
+
+.contexto-empresa {
   color: var(--muted);
-  line-height: 1.65;
 }
 
 .main {
   flex: 1;
-  padding: 28px 34px;
+  padding: 26px 30px 34px;
   min-width: 0;
 }
 
@@ -507,7 +565,7 @@ textarea {
   height: 38px;
   border-radius: 50%;
   background: var(--primary);
-  color: #ffffff;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -519,8 +577,8 @@ textarea {
 
 .card {
   background: var(--surface);
+  border: 1px solid var(--border-suave);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   padding: 22px;
 }
 
@@ -542,8 +600,8 @@ textarea {
 .toolbar input,
 .toolbar select {
   padding: 10px 13px;
-  background: var(--bg);
-  border: 1px solid transparent;
+  background: var(--surface-2);
+  border: 1px solid var(--border-suave);
   border-radius: var(--radius-sm);
   outline: none;
   min-width: 170px;
@@ -551,7 +609,7 @@ textarea {
 
 .toolbar input:focus,
 .toolbar select:focus {
-  background: var(--surface);
+  background: var(--surface-3);
   border-color: var(--primary);
 }
 
@@ -630,7 +688,7 @@ tbody td:last-child {
 
 tbody tr.selected {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--surface);
 }
 
 tbody tr.selected td {
@@ -721,44 +779,44 @@ tbody tr.selected .status {
 }
 
 .action-edit {
-  background: #f6e8dd;
-  color: #a3431a;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
 }
 
 .action-edit:hover {
-  background: #f0dbc9;
+  background: rgba(239, 90, 61, 0.26);
 }
 
 .action-danger {
-  background: #f9e2dd;
-  color: #a8391f;
+  background: rgba(229, 72, 77, 0.14);
+  color: var(--primary-dark);
 }
 
 .action-danger:hover {
-  background: #f4d2ca;
+  background: rgba(229, 72, 77, 0.26);
 }
 
 .action-success {
-  background: #e2efe3;
-  color: #31663e;
+  background: rgba(62, 207, 142, 0.13);
+  color: var(--green);
 }
 
 .action-success:hover {
-  background: #d2e6d5;
+  background: rgba(62, 207, 142, 0.24);
 }
 
 .action-price {
-  background: #f8edd7;
-  color: #95681c;
+  background: rgba(240, 160, 44, 0.14);
+  color: var(--accent);
 }
 
 .action-price:hover {
-  background: #f2e2c2;
+  background: rgba(240, 160, 44, 0.26);
 }
 
 tbody tr.selected .row-actions button {
   background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  color: var(--surface);
 }
 
 tbody tr.selected .row-actions button:hover {
@@ -793,7 +851,7 @@ tbody tr.selected .row-actions button:hover {
 
 .pagination button.active {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--surface);
 }
 
 .pagination button:disabled {
@@ -812,7 +870,7 @@ tbody tr.selected .row-actions button:hover {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(38, 23, 15, 0.5);
+  background: rgba(0, 0, 0, 0.72);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -828,7 +886,7 @@ tbody tr.selected .row-actions button:hover {
   max-width: 460px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 60px rgba(38, 23, 15, 0.28);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
   animation: modal-in 0.22s cubic-bezier(0.2, 0.85, 0.3, 1) both;
 }
 
@@ -920,9 +978,9 @@ tbody tr.selected .row-actions button:hover {
 
 .metric {
   background: var(--surface);
+  border: 1px solid var(--border-suave);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: var(--shadow);
 }
 
 .metric span {
@@ -1003,52 +1061,15 @@ tbody tr.selected .row-actions button:hover {
     grid-template-columns: 1fr;
   }
 
-  .sidebar {
-    width: 76px;
-    padding: 20px 10px;
-  }
-
-  .sidebar-brand span,
-  .sidebar-name,
-  .topbar-user span:not(.avatar) {
-    display: none;
-  }
-
-  .sidebar-brand {
-    justify-content: center;
-    padding: 0 0 24px;
-  }
-
-  .sidebar-user {
-    justify-content: center;
-    padding: 0 0 12px;
-  }
 
   .btn-logout {
     font-size: 11px;
     padding: 8px 4px;
   }
-
-  .sidebar-nav a {
-    text-align: center;
-    padding: 12px 6px;
-    font-size: 12px;
-  }
-
   .main {
     padding: 20px 16px;
   }
 }
-
-/* ---------- identidad de rol en la barra lateral ---------- */
-
-.sidebar-ident {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
 .rol-chip {
   font-size: 10px;
   font-weight: 700;
@@ -1061,23 +1082,13 @@ tbody tr.selected .row-actions button:hover {
 
 .rol-admin {
   background: rgba(193, 84, 31, 0.22);
-  color: #f0c4a8;
+  color: var(--primary);
 }
 
 .rol-trabajador {
   background: rgba(192, 138, 46, 0.22);
-  color: #e6cd9b;
+  color: var(--accent);
 }
-
-.sidebar-empresa {
-  display: block;
-  font-size: 12px;
-  color: rgba(247, 241, 230, 0.5);
-  margin: 12px 0 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(247, 241, 230, 0.12);
-}
-
 /* ---------- chips ---------- */
 
 .chip {
@@ -1095,8 +1106,8 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .chip-externa {
-  background: #e3edf5;
-  color: #1a5a80;
+  background: rgba(77, 163, 255, 0.14);
+  color: var(--serie-otra);
 }
 
 .chip-tipo {
@@ -1106,12 +1117,12 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .chip-capacidad {
-  background: #eef4ea;
-  color: #3f6b45;
+  background: rgba(62, 207, 142, 0.13);
+  color: var(--green);
 }
 
 .chip-add_column {
-  background: #e8f1e9;
+  background: rgba(62, 207, 142, 0.13);
   color: var(--green);
 }
 
@@ -1121,7 +1132,7 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .chip-drop_column {
-  background: #fbe8e4;
+  background: var(--primary-soft);
   color: var(--danger);
 }
 
@@ -1139,7 +1150,7 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .carga-externa {
-  border-top-color: #1a6fb0;
+  border-top-color: var(--serie-otra);
 }
 
 .carga-head h3 {
@@ -1165,7 +1176,7 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .tag-externa {
-  color: #1a6fb0;
+  color: var(--serie-otra);
 }
 
 .dropzone {
@@ -1189,7 +1200,7 @@ tbody tr.selected .row-actions button:hover {
 .dropzone.con-archivo {
   border-style: solid;
   border-color: var(--green);
-  background: #f2f8f3;
+  background: rgba(62, 207, 142, 0.08);
 }
 
 .dropzone strong {
@@ -1212,7 +1223,7 @@ tbody tr.selected .row-actions button:hover {
 .archivo-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 3px solid #1a6fb0;
+  border-left: 3px solid var(--serie-otra);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
@@ -1226,7 +1237,7 @@ tbody tr.selected .row-actions button:hover {
 
 .archivo-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(38, 23, 15, 0.13);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
 }
 
 .archivo-card.es-propia {
@@ -1358,7 +1369,7 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .col-borrar:hover {
-  background: #fbe8e4;
+  background: var(--primary-soft);
   color: var(--danger);
 }
 
@@ -1372,7 +1383,7 @@ tbody tr.selected .row-actions button:hover {
 }
 
 .vacio {
-  color: #cbb9a6;
+  color: var(--tenue);
 }
 
 .etiqueta-bloque {
@@ -1527,7 +1538,7 @@ tbody tr.selected .row-actions button:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: 0 6px 22px rgba(38, 23, 15, 0.14);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
   padding: 10px 13px;
   font-size: 12px;
 }
@@ -1688,19 +1699,6 @@ tbody tr.selected .row-actions button:hover {
 .main > *:nth-child(5) { animation-delay: 240ms; }
 .main > *:nth-child(n + 6) { animation-delay: 300ms; }
 
-/* La barra lateral entra una sola vez, al montar el layout */
-
-.sidebar {
-  animation: entrar-izquierda var(--lento) var(--curva) backwards;
-}
-
-.sidebar-nav a {
-  animation: aparecer-suave var(--medio) ease backwards;
-}
-
-.sidebar-nav a:nth-child(1) { animation-delay: 140ms; }
-.sidebar-nav a:nth-child(2) { animation-delay: 200ms; }
-.sidebar-nav a:nth-child(3) { animation-delay: 260ms; }
 
 /* ---------- listas escalonadas ---------- */
 
@@ -1889,19 +1887,9 @@ tbody tr.selected .row-actions button:hover {
 .avatar-light {
   transition: transform var(--medio) var(--curva);
 }
-
-.sidebar-user:hover .avatar-light {
-  transform: scale(1.06);
-}
-
 .brand-logo {
   transition: transform var(--lento) var(--curva);
 }
-
-.sidebar-brand:hover .brand-logo {
-  transform: rotate(-6deg) scale(1.06);
-}
-
 /* La barra de la comparativa crece desde la izquierda al aparecer, y
    despues sigue animando su ancho cuando cambia la seleccion. */
 
@@ -2023,7 +2011,7 @@ tbody tr.selected .row-actions button:hover {
   padding: 0 6px;
   border-radius: 20px;
   background: var(--primary);
-  color: #ffffff;
+  color: var(--surface);
   font-size: 11px;
   font-weight: 700;
   animation: aparecer-escala var(--medio) var(--curva) backwards;
@@ -2117,4 +2105,658 @@ tbody tr.selected .row-actions button:hover {
   height: 7px;
   border-radius: 50%;
   background: var(--green);
+}
+
+
+/* ---------- usuario mas dominio fijo ---------- */
+
+/* El dominio no se escribe: se muestra pegado al campo para que quede claro
+   que el correo se arma solo y que toda la empresa comparte el mismo. */
+.input-dominio {
+  display: flex;
+  align-items: stretch;
+  background: var(--surface-2);
+  border: 1px solid var(--border-suave);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color var(--rapido), background var(--rapido);
+}
+
+.input-dominio:focus-within {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+.input-dominio input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.input-dominio input:focus {
+  background: transparent;
+  border-color: transparent;
+}
+
+.input-dominio span {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* ---------- modulo de usuarios ---------- */
+
+.auth-ayuda {
+  margin: -6px 0 4px;
+  text-align: right;
+}
+
+.auth-ayuda a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--rapido);
+}
+
+.auth-ayuda a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* El rol se cambia desde la propia fila: abrir un modal para un unico
+   campo de dos opciones seria mas ceremonia que la decision. */
+.select-rol {
+  padding: 7px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--rapido), background var(--rapido);
+}
+
+.select-rol:hover:not(:disabled) {
+  border-color: var(--primary);
+}
+
+.select-rol:focus {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+.select-rol:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.acciones-fila {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.acciones-fila button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.empty-grande {
+  padding: 48px 32px;
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.empty-grande strong {
+  display: block;
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.empty-grande p {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.empty-grande code {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* ---------- reparto de modulos ---------- */
+
+.modulos-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.modulos-cabecera .etiqueta-bloque {
+  margin: 0;
+}
+
+.modulos-atajos {
+  display: flex;
+  gap: 6px;
+}
+
+.modulos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* La fila entera es el area de clic: apuntarle a la casilla sola es
+   innecesariamente fino para algo que se marca varias veces seguidas. */
+.modulo-opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--rapido), background var(--rapido);
+}
+
+.modulo-opcion:hover {
+  border-color: var(--border);
+}
+
+.modulo-opcion.activa {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.modulo-opcion input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modulo-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.modulo-texto strong {
+  font-weight: 600;
+}
+
+.modulo-texto .muted {
+  font-size: 12px;
+}
+
+.modulo-texto code {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.modulos-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 320px;
+}
+
+.chip-vacio {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+/* ---------- lanzador del ERP ---------- */
+
+.erp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.erp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform var(--rapido), border-color var(--rapido), background var(--rapido);
+}
+
+.erp-card:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--surface-2);
+  border-color: var(--primary-borde);
+}
+
+/* Los modulos sin acceso se muestran apagados y no se esconden: saber que
+   el ERP tiene cuatro partes ubica mejor que ver una sola y no saber si
+   eso es todo lo que hay o todo lo que te dieron. */
+.erp-card.bloqueada {
+  cursor: not-allowed;
+  opacity: 0.45;
+  border-left-color: var(--border);
+}
+
+.erp-card.vacia:not(.bloqueada) {
+  border-left-color: var(--muted);
+}
+
+.erp-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.erp-card-head h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.erp-card-desc {
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 13px;
+}
+
+.erp-card-modulos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.erp-card-modulos span {
+  font-size: 11.5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.erp-card-nota {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.erp-pie {
+  margin-top: 22px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+
+/* ---------- reparto en dos niveles ---------- */
+
+.acceso-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acceso-curso {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color var(--rapido);
+}
+
+.acceso-curso.activo {
+  border-color: var(--primary);
+}
+
+.acceso-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.acceso-curso.activo .acceso-cabecera {
+  background: var(--primary-soft);
+}
+
+.acceso-cabecera input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Las pantallas van indentadas bajo su modulo: la sangria es lo que hace
+   legible que el permiso de abajo depende del de arriba. */
+.acceso-pantallas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px 14px 40px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.acceso-pendientes {
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.modulos-chips .chip b {
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+/* ---------- estructura detectada al importar ---------- */
+
+/* En rejilla y no en tabla: un archivo de veinte columnas cabe entero a lo
+   ancho del modal, sin obligar a desplazarse a los lados para leer el tipo
+   ni a recorrer una lista larguisima hacia abajo. */
+.estructura-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  max-height: 42vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.estructura-campo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  min-width: 0;
+}
+
+.estructura-campo strong {
+  font-weight: 600;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.estructura-campo .muted {
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* ---------- resumen de un archivo ---------- */
+
+.resumen-bloque {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+  min-width: 0;
+}
+
+.resumen-bloque .table-wrap {
+  overflow-x: auto;
+}
+
+.resumen-bloque .insight:last-child {
+  margin-bottom: 0;
+}
+
+.columnas-detectadas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.columnas-detectadas span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.columnas-detectadas .columna-rol {
+  background: var(--primary-soft);
+  border-color: transparent;
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+
+.columnas-detectadas b {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
+/* El modal ancho no debe desplazarse a los lados. Lo que no entra se
+   reacomoda en menos columnas antes que forzar scroll horizontal; las
+   tablas, que si pueden ser mas anchas que cualquier pantalla, se
+   desplazan dentro de su propio contenedor y no arrastran al modal. */
+.modal-ancho .metric {
+  min-width: 0;
+}
+
+.modal-ancho .metric strong {
+  word-break: break-word;
+}
+
+@media (max-width: 980px) {
+  .modal-ancho .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-ancho .metrics-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .modal-ancho .metrics-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .estructura-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- riel: entrada y pantallas angostas ---------- */
+
+.riel-item {
+  animation: aparecer-suave var(--medio) ease backwards;
+}
+
+.riel-nav .riel-item:nth-of-type(1) { animation-delay: 120ms; }
+.riel-nav .riel-item:nth-of-type(2) { animation-delay: 170ms; }
+.riel-nav .riel-item:nth-of-type(3) { animation-delay: 220ms; }
+.riel-nav .riel-item:nth-of-type(4) { animation-delay: 270ms; }
+.riel-nav .riel-item:nth-of-type(5) { animation-delay: 320ms; }
+
+.riel-marca:hover img {
+  transform: scale(1.08);
+  transition: transform var(--rapido);
+}
+
+/* En movil el riel pasa a barra inferior: 88 pixeles de ancho sobre una
+   pantalla de 360 son una cuarta parte del sistema gastada en navegar. */
+@media (max-width: 720px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .riel {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    z-index: 30;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px 8px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .riel-marca,
+  .riel-separador {
+    display: none;
+  }
+
+  .riel-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .riel-item {
+    padding: 8px 6px;
+    min-width: 60px;
+  }
+
+  .riel-pie {
+    flex-direction: row;
+    width: auto;
+    padding-top: 0;
+    padding-left: 10px;
+    border-top: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .avatar-riel {
+    display: none;
+  }
+
+  .main {
+    padding: 20px 16px 92px;
+  }
+}
+
+/* ---------- ajustes finales del tema oscuro ---------- */
+
+/* Las tarjetas y tablas se separan por borde. Sobre negro una sombra no
+   aporta profundidad, solo ensucia el borde. */
+.archivo-card,
+.comparativa {
+  box-shadow: none;
+}
+
+.archivo-card:hover {
+  background: var(--surface-2);
+  border-color: var(--primary-borde);
+}
+
+thead th {
+  color: var(--muted);
+  border-bottom-color: var(--border);
+}
+
+tbody tr {
+  border-bottom-color: var(--border-suave);
+}
+
+/* El tooltip de los graficos flota sobre la tarjeta: necesita ser mas
+   claro que ella, no mas oscuro. */
+.tooltip {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* La barra de nivel de un insight se lee por color, y en oscuro los tres
+   tonos tienen que separarse entre si tanto como del fondo. */
+.insight-bar.oportunidad {
+  background: var(--green);
+}
+
+.insight-bar.alerta {
+  background: var(--accent);
+}
+
+.insight-bar.info {
+  background: var(--serie-otra);
+}
+
+/* La zona de carga es el elemento mas grande de su pantalla: en oscuro
+   necesita un borde visible o parece que no hay nada donde soltar. */
+.dropzone {
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.dropzone.activa {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+::selection {
+  background: var(--primary-soft);
+  color: var(--text);
+}
+
+/* La barra de desplazamiento clara sobre fondo negro corta la pantalla en
+   dos. Se pinta con los mismos tonos que el resto. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 20px;
+  border: 2px solid var(--bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tenue);
 }

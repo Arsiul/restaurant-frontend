@@ -1,13 +1,18 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import api, { getMessage, saveSession, inicioSegunRol } from "../api"
+import api, { getMessage, saveSession, inicioSegunRol, getDominio } from "../api"
 
 const Login = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
+  const [correo, setCorreo] = useState("")
   const [password, setPassword] = useState("")
+  const [dominio, setDominio] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    getDominio().then(setDominio)
+  }, [])
 
   const submit = async (event) => {
     event.preventDefault()
@@ -15,14 +20,16 @@ const Login = () => {
     setLoading(true)
 
     try {
-      const { data } = await api.post("/auth/login", { email, password })
+      // El backend acepta el correo completo o solo el usuario: si llega
+      // "jperez" le agrega el dominio de la empresa antes de autenticar.
+      const { data } = await api.post("/auth/login", { usuario: correo, password })
       saveSession(data.token, data.user, data.perfil)
       navigate(inicioSegunRol())
     } catch (problem) {
-      const pending = problem.response && problem.response.data && problem.response.data.pending
+      const respuesta = (problem.response && problem.response.data) || {}
 
-      if (pending) {
-        navigate("/registro", { state: { email, step: "verify" } })
+      if (respuesta.pending) {
+        navigate("/registro", { state: { email: respuesta.email || correo, step: "verify" } })
         return
       }
 
@@ -67,18 +74,19 @@ const Login = () => {
       <section className="auth-panel">
         <form className="auth-form" onSubmit={submit}>
           <h1>Bienvenido</h1>
-          <p>Ingresa tus credenciales para continuar</p>
+          <p>Ingresa con el correo de la empresa</p>
 
           {error && <div className="alert alert-error">{error}</div>}
 
           <div className="field">
-            <label htmlFor="email">Correo electronico</label>
+            <label htmlFor="correo">Correo</label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="correo@ejemplo.com"
+              id="correo"
+              type="text"
+              value={correo}
+              onChange={(event) => setCorreo(event.target.value)}
+              placeholder={dominio ? `usuario@${dominio}` : "correo@ejemplo.com"}
+              autoComplete="username"
               required
             />
           </div>
@@ -91,8 +99,13 @@ const Login = () => {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Tu contrasena"
+              autoComplete="current-password"
               required
             />
+          </div>
+
+          <div className="auth-ayuda">
+            <Link to="/recuperar">Olvidaste tu contrasena?</Link>
           </div>
 
           <button type="submit" className="btn btn-block" disabled={loading}>

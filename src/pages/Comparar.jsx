@@ -19,11 +19,11 @@ import Modal from "../components/Modal"
  * delta E 28 en vision normal y 20.8 en protanopia. El oxido es el color de
  * marca y siempre representa a nuestra empresa; el azul, a la competencia.
  */
-const SERIE_PROPIA = "#c1541f"
-const SERIE_OTRA = "#1a6fb0"
+const SERIE_PROPIA = "#ef5a3d"
+const SERIE_OTRA = "#4da3ff"
 
-const EJE = "#8d7663"
-const GRID = "#efe4d8"
+const EJE = "#8b8b98"
+const GRID = "#2a2a33"
 
 /** Escala corta para los ejes: S/ 4.2M entra donde 4156307.90 no. */
 const corto = (valor) => {
@@ -291,7 +291,7 @@ const Comparar = () => {
                       axisLine={false}
                       tickLine={false}
                     />
-                    <Tooltip content={<Tip />} cursor={{ fill: "rgba(38,23,15,0.04)" }} />
+                    <Tooltip content={<Tip />} cursor={{ fill: "rgba(255,255,255,0.05)" }} />
                     {empresas.length > 1 && <Legend iconType="circle" iconSize={8} />}
 
                     {empresas.map((empresa, indice) => (
@@ -339,7 +339,7 @@ const Comparar = () => {
                         dataKey={empresa.empresa}
                         stroke={colorDe(indice)}
                         strokeWidth={2}
-                        dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                        dot={{ r: 4, strokeWidth: 2, fill: "#17171c" }}
                         activeDot={{ r: 6 }}
                       />
                     ))}
