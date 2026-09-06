@@ -79,6 +79,7 @@ frontend/
       DatosEmpresa.jsx         Datos de la empresa
       Archivos.jsx             Archivos cargados
       Comparar.jsx             Comparar restaurantes
+      Documentos.jsx           Documentacion de respaldo del curso
       Usuarios.jsx             Alta y mantenimiento de cuentas
 ```
 
@@ -95,6 +96,7 @@ frontend/
 | `/datos-empresa` | `big_data.estructura` | Estructura de datos |
 | `/archivos` | `big_data.datasets` | Datasets |
 | `/comparar` | `big_data.comparar` | Comparacion |
+| `/documentos` | `big_data.documentos` | Documentos |
 | `/usuarios` | Rol de administrador | Usuarios |
 
 El sistema es un **ERP de cuatro modulos**. Todo lo desarrollado vive dentro
@@ -152,6 +154,32 @@ el tipo deducido.
 La estructura va en rejilla y no en tabla. Un archivo de veinte columnas cabe
 entero a lo ancho del modal, sin obligar a desplazarse a los lados para leer el
 tipo de cada una.
+
+### Un archivo no se importa dos veces
+
+Si el contenido ya esta cargado, la carga se rechaza y se indica cuando entro
+la primera vez y quien la subio. Se compara el contenido, no el nombre:
+renombrar el archivo o volver a exportarlo desde Excel no lo cuela.
+
+Para volver a subirlo hay que eliminar antes el anterior.
+
+### Eliminar un archivo
+
+Cada fila trae tambien un boton de eliminar, con confirmacion. El aviso
+cambia segun el archivo:
+
+| Archivo | Lo que advierte |
+|---|---|
+| De la competencia | Sus filas dejan de estar disponibles para comparar |
+| De la empresa | **Ademas se borran sus filas de `empresa_datos`** |
+
+Ese segundo caso importa porque esas filas no caen solas: la tabla de la
+empresa no tiene clave foranea contra las importaciones. Las columnas que se
+hayan agregado a mano se conservan; lo que desaparece son los datos de ese
+archivo.
+
+Quien solo tenga el modulo de importacion ve y elimina unicamente sus propios
+archivos. Con Datasets concedido, los de todos.
 
 ### Resumen de un archivo
 
@@ -211,6 +239,44 @@ como hechas a mano.
 Abajo queda la bitacora de todos los cambios de estructura aplicados, con su
 motivo.
 
+### Documentos
+
+Documentacion de respaldo del curso: manuales, informes y anexos, en PDF,
+Word, Excel o PowerPoint, hasta 25 MB.
+
+| Accion | Que hace |
+|---|---|
+| Arrastrar o elegir | Sube el documento, con descripcion y clasificacion |
+| Ver | Muestra el PDF dentro de la aplicacion |
+| Editar | Cambia la descripcion o el modulo al que pertenece |
+| Eliminar | Borra el archivo del almacenamiento, no solo su ficha |
+
+Cada documento puede quedar general del curso o clasificarse en uno de sus
+modulos, y la lista se filtra por eso.
+
+El almacenamiento es privado, asi que **ver** no es abrir una URL fija: la
+pantalla pide al backend un enlace firmado que caduca a los cinco minutos.
+Por eso el boton tarda un instante y no es un enlace normal.
+
+### Vista previa
+
+El PDF se ve **antes de subirlo**. El navegador trae su propio visor, asi que
+basta darle una direccion temporal al fichero del disco: no se sube nada
+hasta pulsar el boton. Con previsualizacion el modal se parte en dos, el
+documento a la izquierda y sus datos a la derecha, para poder decidir como
+clasificarlo mirandolo.
+
+Esa direccion temporal se revoca al cerrar. Sin eso, cada archivo que se
+abriera dejaria su copia retenida en memoria hasta recargar la pagina.
+
+Un PDF ya guardado tambien se ve dentro de la aplicacion, con el enlace
+firmado en el mismo visor, y queda el boton para abrirlo aparte.
+
+Word, Excel y PowerPoint no se pueden previsualizar: el navegador no sabe
+dibujarlos y hacerlo exigiria una libreria que ademas daria un resultado
+aproximado. Para esos formatos la pantalla lo dice y los delega al navegador,
+que sabra descargarlos o abrirlos con su programa.
+
 ## Modulos de analisis
 
 ### Archivos cargados
@@ -248,7 +314,7 @@ administrador.
 |---|---|
 | Crear usuario | Da de alta la cuenta, ya activa y sin codigo de verificacion |
 | Modulos | Elige a que secciones entra esa persona |
-| Cambiar el rol | Desde la propia fila. Un modal para dos opciones seria mas ceremonia que la decision |
+| Cambiar el rol | Desde la propia fila, con confirmacion |
 | Restablecer clave | Fija una contrasena nueva, sin pasar por el correo |
 | Eliminar | Borra la cuenta con sus archivos y sus tareas |
 
@@ -274,6 +340,25 @@ El formulario pide nombre, usuario, rol, empresa y contrasena inicial. El
 usuario se propone a partir del nombre (`Juana Perez` da `jperez`) y queda
 editable. Al lado del campo va el dominio de la empresa, fijo: deja claro que
 el correo se arma solo y que nadie elige el suyo.
+
+### El cambio de rol se confirma
+
+Es la accion mas consecuente del panel y la mas facil de disparar sin querer,
+porque basta rozar un desplegable. El modal explica que va a pasar, y el
+texto cambia segun la direccion, porque las consecuencias no son simetricas:
+
+| Cambio | Lo que avisa |
+|---|---|
+| A administrador | Entrara a todos los modulos por su rol y podra administrar cuentas |
+| A trabajador, con modulos asignados | Pasara a ver unicamente esos modulos |
+| A trabajador, sin ninguno asignado | **Se quedara sin acceso a ninguna pantalla** |
+
+Ese ultimo caso es el que justifica el aviso. Un administrador entra a todo
+por su rol, asi que puede no tener ningun modulo asignado nunca; al quitarle
+el rol se queda sin nada, y sin el aviso no habria forma de preverlo.
+
+Al cancelar no hay que revertir el desplegable: esta gobernado por el rol de
+la lista, que no se toca hasta que el servidor responde.
 
 Un administrador no puede cambiarse el rol ni eliminarse a si mismo. Los dos
 controles estan tambien en el servidor; en la interfaz solo se deshabilitan

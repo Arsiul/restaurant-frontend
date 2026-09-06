@@ -57,7 +57,8 @@ export const MODULOS = {
   IMPORTAR: "big_data.importar",
   ESTRUCTURA: "big_data.estructura",
   ARCHIVOS: "big_data.datasets",
-  COMPARAR: "big_data.comparar"
+  COMPARAR: "big_data.comparar",
+  DOCUMENTOS: "big_data.documentos"
 }
 
 export const getModulos = () => {

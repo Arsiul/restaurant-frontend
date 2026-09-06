@@ -10,6 +10,7 @@ import Importar from "./pages/Importar"
 import DatosEmpresa from "./pages/DatosEmpresa"
 import Archivos from "./pages/Archivos"
 import Comparar from "./pages/Comparar"
+import Documentos from "./pages/Documentos"
 import Usuarios from "./pages/Usuarios"
 
 /**
@@ -79,6 +80,10 @@ const App = () => (
     />
     <Route path="/archivos" element={<Privada modulo={MODULOS.ARCHIVOS}><Archivos /></Privada>} />
     <Route path="/comparar" element={<Privada modulo={MODULOS.COMPARAR}><Comparar /></Privada>} />
+    <Route
+      path="/documentos"
+      element={<Privada modulo={MODULOS.DOCUMENTOS}><Documentos /></Privada>}
+    />
 
     {/* Repartir accesos no es una pantalla repartible: va atada al rol */}
     <Route path="/usuarios" element={<Privada soloAdmin><Usuarios /></Privada>} />

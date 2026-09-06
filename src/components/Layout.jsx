@@ -31,14 +31,16 @@ const ICONOS = {
   "big_data.importar": "importar",
   "big_data.estructura": "estructura",
   "big_data.datasets": "datasets",
-  "big_data.comparar": "comparar"
+  "big_data.comparar": "comparar",
+  "big_data.documentos": "documentos"
 }
 
 const CORTOS = {
   "big_data.importar": "Importar",
   "big_data.estructura": "Estructura",
   "big_data.datasets": "Datasets",
-  "big_data.comparar": "Comparar"
+  "big_data.comparar": "Comparar",
+  "big_data.documentos": "Documentos"
 }
 
 /** El riel es angosto: una etiqueta de dos palabras no entra legible. */

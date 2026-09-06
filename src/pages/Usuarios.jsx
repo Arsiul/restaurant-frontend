@@ -37,6 +37,7 @@ const Usuarios = () => {
   const [accesos, setAccesos] = useState(null)
   const [clave, setClave] = useState(null)
   const [borrando, setBorrando] = useState(null)
+  const [rolPendiente, setRolPendiente] = useState(null)
   const [guardando, setGuardando] = useState(false)
 
   const cargar = () => {
@@ -137,7 +138,20 @@ const Usuarios = () => {
     }
   }
 
-  const cambiarRol = async (usuario, role) => {
+  /**
+   * Cambiar el rol no se aplica al soltar el desplegable: se confirma.
+   *
+   * Es la accion mas consecuente del panel y la mas facil de disparar sin
+   * querer, porque basta rozar un desplegable. Ademas cambia lo que la
+   * persona ve y lo que puede hacer sobre las cuentas de los demas.
+   *
+   * Al cancelar no hay que revertir nada: el desplegable esta gobernado
+   * por el rol de la lista, que no se toca hasta que el servidor responde.
+   */
+  const cambiarRol = async () => {
+    const { usuario, role } = rolPendiente
+
+    setGuardando(true)
     setError("")
 
     try {
@@ -147,9 +161,13 @@ const Usuarios = () => {
           role === "admin" ? "administrador" : "trabajador"
         }`
       )
+      setRolPendiente(null)
       cargar()
     } catch (problema) {
       setError(getMessage(problema))
+      setRolPendiente(null)
+    } finally {
+      setGuardando(false)
     }
   }
 
@@ -332,7 +350,9 @@ const Usuarios = () => {
                           title={
                             usuario.esYo ? "No puedes cambiarte el rol a ti mismo" : "Cambiar el rol"
                           }
-                          onChange={(e) => cambiarRol(usuario, e.target.value)}
+                          onChange={(e) =>
+                            setRolPendiente({ usuario, role: e.target.value })
+                          }
                         >
                           {ROLES.map((rol) => (
                             <option key={rol.valor} value={rol.valor}>
@@ -575,6 +595,13 @@ const Usuarios = () => {
         </Modal>
       )}
 
+      {rolPendiente && <ConfirmarRol
+        pendiente={rolPendiente}
+        guardando={guardando}
+        onCancel={() => setRolPendiente(null)}
+        onConfirm={cambiarRol}
+      />}
+
       {borrando && (
         <Confirm
           title="Eliminar cuenta"
@@ -700,6 +727,40 @@ const Accesos = ({ erp, estado, ponerEstado }) => {
         </p>
       )}
     </>
+  )
+}
+
+/**
+ * Confirmacion del cambio de rol.
+ *
+ * El texto cambia segun la direccion, porque las consecuencias no son
+ * simetricas: promover concede todo el sistema, y degradar puede dejar a
+ * alguien sin acceso a nada si nunca se le asigno ningun modulo.
+ */
+const ConfirmarRol = ({ pendiente, guardando, onCancel, onConfirm }) => {
+  const { usuario, role } = pendiente
+  const nombre = usuario.full_name || `@${usuario.usuario}`
+  const promueve = role === "admin"
+  const asignados = (usuario.asignado && usuario.asignado.modulos.length) || 0
+  const quedaSinNada = !promueve && asignados === 0
+
+  const detalle = promueve
+    ? "Entrara a todos los modulos del sistema por su rol, y ademas podra crear cuentas, cambiar roles y repartir accesos. Los modulos que tenga asignados dejan de influir mientras sea administrador."
+    : quedaSinNada
+      ? "No tiene ningun modulo asignado, asi que se quedara sin acceso a ninguna pantalla. Tendras que darselos desde Accesos."
+      : `Pasara a ver unicamente ${asignados === 1 ? "el modulo que tiene asignado" : `los ${asignados} modulos que tiene asignados`}, y dejara de poder administrar cuentas.`
+
+  return (
+    <Confirm
+      title={promueve ? "Promover a administrador" : "Quitar el rol de administrador"}
+      message={`${nombre} ${promueve ? "pasara a ser administrador" : "dejara de ser administrador"}.`}
+      detail={detalle}
+      confirmLabel={promueve ? "Promover" : "Quitar el rol"}
+      danger={!promueve}
+      loading={guardando}
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   )
 }
 

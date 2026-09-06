@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import api, { getMessage, getUserName, getInitials, getEmpresa, miles } from "../api"
 import * as db from "../empresaDb"
 import Modal from "../components/Modal"
+import Confirm from "../components/Confirm"
 import ResumenImport from "../components/ResumenImport"
 
 /**
@@ -146,6 +147,9 @@ const Importar = () => {
   const [error, setError] = useState("")
   const [resultado, setResultado] = useState(null)
   const [resumen, setResumen] = useState(null)
+  const [borrando, setBorrando] = useState(null)
+  const [eliminando, setEliminando] = useState(false)
+  const [aviso, setAviso] = useState("")
 
   const cargar = () => {
     api
@@ -160,6 +164,36 @@ const Importar = () => {
   const subido = (data) => {
     setResultado(data)
     cargar()
+  }
+
+  /**
+   * Eliminar un archivo se lleva sus filas y, si era propio, tambien lo que
+   * se habia volcado a la tabla de la empresa: esas filas no caen solas
+   * porque no hay clave foranea que las ate.
+   */
+  const eliminar = async () => {
+    setEliminando(true)
+    setError("")
+
+    try {
+      const { data } = await api.delete(`/imports/${borrando.id}`)
+
+      setAviso(
+        `Se elimino "${data.archivo}"` +
+          (data.materializadas > 0
+            ? `, con sus ${miles(data.materializadas)} filas de la tabla de la empresa`
+            : "")
+      )
+      setTimeout(() => setAviso(""), 6000)
+
+      setBorrando(null)
+      cargar()
+    } catch (problema) {
+      setError(getMessage(problema))
+      setBorrando(null)
+    } finally {
+      setEliminando(false)
+    }
   }
 
   return (
@@ -187,6 +221,7 @@ const Importar = () => {
         <div className="chart-title">Archivos que has cargado</div>
 
         {cargando && <div className="loading">Cargando</div>}
+        {aviso && <div className="alert alert-success">{aviso}</div>}
         {error && <div className="alert alert-error">{error}</div>}
 
         {!cargando && lista.length === 0 && (
@@ -204,7 +239,7 @@ const Importar = () => {
                   <th style={{ textAlign: "right" }}>Filas</th>
                   <th style={{ textAlign: "right" }}>Columnas</th>
                   <th>Fecha</th>
-                  <th style={{ textAlign: "right" }}>Resumen</th>
+                  <th style={{ textAlign: "right" }}>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -225,14 +260,24 @@ const Importar = () => {
                     <td className="muted">
                       {new Date(item.created_at).toLocaleDateString("es-PE")}
                     </td>
-                    <td style={{ textAlign: "right" }}>
-                      <button
-                        type="button"
-                        className="btn btn-light btn-sm"
-                        onClick={() => setResumen(item)}
-                      >
-                        Ver resumen
-                      </button>
+                    <td>
+                      <div className="acciones-fila">
+                        <button
+                          type="button"
+                          className="btn btn-light btn-sm"
+                          onClick={() => setResumen(item)}
+                        >
+                          Ver resumen
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => setBorrando(item)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -307,6 +352,25 @@ const Importar = () => {
         </Modal>
       )}
       {resumen && <ResumenImport importacion={resumen} onClose={() => setResumen(null)} />}
+
+      {borrando && (
+        <Confirm
+          title="Eliminar archivo importado"
+          message={`Se eliminara "${borrando.archivo}" y sus ${miles(borrando.total_filas)} filas.`}
+          detail={
+            borrando.tabla_fisica
+              ? `Como era un archivo de la empresa, tambien se borraran sus ${miles(
+                  borrando.total_filas
+                )} filas de la tabla ${borrando.tabla_fisica}. Las columnas que hayas agregado se conservan, pero los datos de este archivo desapareceran de ahi.`
+              : "Los datos dejaran de estar disponibles para comparar. La operacion no se puede deshacer."
+          }
+          confirmLabel="Eliminar"
+          danger
+          loading={eliminando}
+          onCancel={() => setBorrando(null)}
+          onConfirm={eliminar}
+        />
+      )}
     </>
   )
 }
