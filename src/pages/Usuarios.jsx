@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import api, { getMessage, getUserName, getInitials, getEmpresa, getDominio, aUsuario } from "../api"
+import api, { getMessage, getUserName, getInitials, getDominio, aUsuario } from "../api"
 import Modal from "../components/Modal"
 import Confirm from "../components/Confirm"
 
@@ -71,7 +71,6 @@ const Usuarios = () => {
       usuario: "",
       usuarioTocado: false,
       role: "trabajador",
-      empresa: getEmpresa(),
       password: "",
       cursos: [],
       modulos: [],
@@ -94,7 +93,6 @@ const Usuarios = () => {
         fullName: formulario.fullName,
         usuario: formulario.usuario,
         role: formulario.role,
-        empresa: formulario.empresa,
         password: formulario.password,
         cursos: formulario.cursos,
         modulos: formulario.modulos
@@ -499,24 +497,15 @@ const Usuarios = () => {
             </div>
 
             <div className="field">
-              <label>Empresa</label>
+              <label>Contrasena inicial</label>
               <input
-                value={formulario.empresa}
-                onChange={(e) => setFormulario({ ...formulario, empresa: e.target.value })}
-                placeholder="Ej. Rimberio"
+                type="password"
+                value={formulario.password}
+                onChange={(e) => setFormulario({ ...formulario, password: e.target.value })}
+                placeholder="Minimo 8 caracteres"
+                autoComplete="new-password"
               />
             </div>
-          </div>
-
-          <div className="field">
-            <label>Contrasena inicial</label>
-            <input
-              type="password"
-              value={formulario.password}
-              onChange={(e) => setFormulario({ ...formulario, password: e.target.value })}
-              placeholder="Minimo 8 caracteres"
-              autoComplete="new-password"
-            />
           </div>
 
           {formulario.role === "admin" ? (

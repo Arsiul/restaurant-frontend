@@ -336,7 +336,9 @@ dejar a nadie olvidado despues de crearle la cuenta.
 A un administrador no se le reparte nada: la fila dice *Todos, por su rol* y
 el boton queda deshabilitado.
 
-El formulario pide nombre, usuario, rol, empresa y contrasena inicial. El
+El formulario pide nombre, usuario, rol y contrasena inicial. **La empresa no
+se pide**: hay una sola y es del sistema, asi que no hay forma de que dos
+personas la escriban distinta. El
 usuario se propone a partir del nombre (`Juana Perez` da `jperez`) y queda
 editable. Al lado del campo va el dominio de la empresa, fijo: deja claro que
 el correo se arma solo y que nadie elige el suyo.
