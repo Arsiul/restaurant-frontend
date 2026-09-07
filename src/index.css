@@ -2352,16 +2352,7 @@ tbody tr.selected .row-actions button:hover {
   border-color: var(--primary-borde);
 }
 
-/* Los modulos sin acceso se muestran apagados y no se esconden: saber que
-   el ERP tiene cuatro partes ubica mejor que ver una sola y no saber si
-   eso es todo lo que hay o todo lo que te dieron. */
-.erp-card.bloqueada {
-  cursor: not-allowed;
-  opacity: 0.45;
-  border-left-color: var(--border);
-}
-
-.erp-card.vacia:not(.bloqueada) {
+.erp-card.vacia {
   border-left-color: var(--muted);
 }
 

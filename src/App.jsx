@@ -44,11 +44,13 @@ const ModuloDelErp = () => {
 
   if (!isLogged()) return <Navigate to="/login" replace />
 
-  const curso = getErp().find((item) => item.slug === slug)
+  const erp = getErp()
+  const curso = erp.find((item) => item.slug === slug)
 
-  // Si todavia no se cargo la estructura, se deja pasar: la pantalla no
-  // muestra ningun dato, y el lanzador la refresca al volver.
-  if (curso && !curso.acceso) return <Navigate to="/inicio" replace />
+  // El servidor solo envia los modulos concedidos, asi que no encontrarlo
+  // ya significa no tenerlo. Se exige que la estructura este cargada para
+  // no rebotar a quien todavia no la ha recibido.
+  if (erp.length > 0 && !curso) return <Navigate to="/inicio" replace />
 
   return (
     <Layout>

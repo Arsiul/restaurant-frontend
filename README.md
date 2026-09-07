@@ -102,9 +102,9 @@ frontend/
 El sistema es un **ERP de cuatro modulos**. Todo lo desarrollado vive dentro
 de **Big Data**; los otros tres existen en la estructura y estan vacios.
 
-Todo el mundo entra por `/inicio`, el lanzador. Desde ahi se elige el modulo,
-aunque se tenga acceso a uno solo: ver que el sistema tiene cuatro partes
-ubica mejor que aterrizar suelto en una pantalla.
+Todo el mundo entra por `/inicio`, el lanzador, y ahi ve **unicamente los
+modulos que tiene concedidos**. Lo que no se tiene no se ve: el servidor
+tampoco lo envia, asi que la interfaz no tiene nada que ocultar.
 
 El permiso tiene dos niveles, igual que en la base:
 

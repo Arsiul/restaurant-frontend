@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { getUserName, getInitials, getEmpresa, getErp, cargarErp, esAdmin } from "../api"
 
 /**
- * Lanzador del ERP: los cuatro modulos del sistema como tarjetas.
+ * Lanzador del ERP: los modulos a los que llega esta cuenta, como tarjetas.
  *
- * Los modulos a los que no se llega se muestran apagados en vez de
- * esconderse. Saber que el ERP tiene cuatro partes, aunque solo se entre a
- * una, ubica mucho mejor que ver una sola tarjeta suelta y no saber si eso
- * es todo lo que hay o todo lo que te dieron.
+ * Solo se muestra lo concedido. No hay tarjetas bloqueadas ni apagadas: lo
+ * que no se tiene no se ve, y el servidor tampoco lo envia, asi que aqui no
+ * hay nada que filtrar.
  */
 const Inicio = () => {
   const navigate = useNavigate()
@@ -22,15 +21,14 @@ const Inicio = () => {
   }, [])
 
   /** Al entrar a un modulo se abre su primera pantalla disponible. */
+  /** Entrar a un modulo abre su primera pantalla construida. */
   const abrir = (curso) => {
-    if (!curso.acceso) return
-
-    const pantalla = curso.modulos.find((modulo) => modulo.acceso && modulo.disponible)
+    const pantalla = curso.modulos.find((modulo) => modulo.disponible)
 
     navigate(pantalla ? pantalla.ruta : `/modulo/${curso.slug}`)
   }
 
-  const mios = erp.filter((curso) => curso.acceso)
+  const sinNada = !cargando && erp.length === 0
 
   return (
     <>
@@ -50,7 +48,7 @@ const Inicio = () => {
 
       {cargando && <div className="loading">Cargando modulos</div>}
 
-      {!cargando && mios.length === 0 && (
+      {sinNada && (
         <div className="card">
           <div className="empty empty-grande">
             <strong>Todavia no tienes acceso a ningun modulo</strong>
@@ -65,53 +63,47 @@ const Inicio = () => {
       <div className="erp-grid">
         {erp.map((curso) => {
           const pantallas = curso.modulos.filter((modulo) => modulo.disponible)
-          const concedidas = pantallas.filter((modulo) => modulo.acceso)
-          const vacio = curso.modulos.length === 0
+          const vacio = pantallas.length === 0
 
           return (
             <button
               type="button"
               key={curso.id}
-              className={`erp-card ${curso.acceso ? "" : "bloqueada"} ${vacio ? "vacia" : ""}`}
+              className={`erp-card ${vacio ? "vacia" : ""}`}
               onClick={() => abrir(curso)}
-              disabled={!curso.acceso}
             >
               <div className="erp-card-head">
                 <h3>{curso.nombre}</h3>
 
-                {!curso.acceso ? (
-                  <span className="chip chip-vacio">Sin acceso</span>
-                ) : vacio ? (
+                {vacio ? (
                   <span className="chip chip-vacio">Sin desarrollar</span>
                 ) : (
                   <span className="chip chip-propia">
-                    {concedidas.length} de {pantallas.length}
+                    {pantallas.length} {pantallas.length === 1 ? "pantalla" : "pantallas"}
                   </span>
                 )}
               </div>
 
               <p className="erp-card-desc">{curso.descripcion}</p>
 
-              {curso.acceso && concedidas.length > 0 && (
+              {pantallas.length > 0 && (
                 <div className="erp-card-modulos">
-                  {concedidas.map((modulo) => (
+                  {pantallas.map((modulo) => (
                     <span key={modulo.clave}>{modulo.nombre}</span>
                   ))}
                 </div>
               )}
 
-              {vacio && curso.acceso && (
-                <p className="muted erp-card-nota">Todavia no tiene pantallas</p>
-              )}
+              {vacio && <p className="muted erp-card-nota">Todavia no tiene pantallas</p>}
             </button>
           )
         })}
       </div>
 
-      {esAdmin() && (
+      {esAdmin() && !sinNada && (
         <p className="muted erp-pie">
-          Ves los cuatro modulos porque eres administrador. Los trabajadores solo ven aquellos a
-          los que les diste acceso desde <strong>Usuarios</strong>.
+          Ves todos los modulos porque eres administrador. Cada trabajador ve unicamente aquellos
+          a los que le diste acceso desde <strong>Usuarios</strong>.
         </p>
       )}
     </>
